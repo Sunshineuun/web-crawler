@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
 import java.util.Date;
+import org.springframework.util.StringUtils;
 
 @Service("URLPoolService")
 public class URLPoolServiceImpl
@@ -17,11 +18,9 @@ public class URLPoolServiceImpl
     implements URLPoolService {
 
   /**
-   * 一条一条获取数据，需要测试性能。
-   * 1. 为了让资源不反复被使用，给它增加使用上线，如果达到一定上限后，将不再被使用。
+   * 一条一条获取数据，需要测试性能。 1. 为了让资源不反复被使用，给它增加使用上线，如果达到一定上限后，将不再被使用。
    *
-   * 1. 当数据查询不到的情况会是怎么样的？
-   *  * 查不到，返回的是null
+   * 1. 当数据查询不到的情况会是怎么样的？ * 查不到，返回的是null
    *
    * @return URL
    */
@@ -52,4 +51,17 @@ public class URLPoolServiceImpl
     log.debug("更新结果的数量：{}", updateResult.getMatchedCount());
   }
 
+  @Override
+  public Boolean isExist(URL o) {
+    if (!StringUtils.isEmpty(o.getId())) {
+      return super.isExist(o);
+    }
+
+    Query query = new Query(Criteria.where("url").is(o.getUrl())
+        .and("params").is(o.getParams())
+        .and("isEnable").is(1));
+    URL o1 = getMongoOperations().findOne(query, getEntityClass());
+
+    return o1 != null;
+  }
 }
