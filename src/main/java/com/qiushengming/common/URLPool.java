@@ -46,10 +46,9 @@ public class URLPool {
    * @param url {@link URL}
    */
   public void put(URL url) {
-    if (isExist(url)) {
-      return;
+    if (!isExist(url)) {
+      urlPoolService.save(url);
     }
-    urlPoolService.save(url);
   }
 
   /**
