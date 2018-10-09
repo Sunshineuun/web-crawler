@@ -42,7 +42,7 @@ public abstract class BaseWebCrawler {
   @Resource(name = "EmailTool")
   private EmailTool emailTool;
 
-  protected Download getDownload(){
+  protected Download getDownload() {
     return new SeleniumDownload(Boolean.FALSE);
   }
 
@@ -68,7 +68,7 @@ public abstract class BaseWebCrawler {
     return configService;
   }
 
-  protected EmailTool getEmailTool(){
+  protected EmailTool getEmailTool() {
     return emailTool;
   }
 
@@ -102,7 +102,7 @@ public abstract class BaseWebCrawler {
 
   protected void initConfig() {
     crawlerConfig = configService.findConfigByCrawlerUUID(crawlerUuid);
-    if(crawlerConfig == null || crawlerConfig.getConfig().isEmpty()){
+    if (crawlerConfig == null || crawlerConfig.getConfig().isEmpty()) {
       crawlerConfig = new CrawlerConfig();
       crawlerConfig.setId(crawlerUuid);
       crawlerConfig.putAll(getCrawlerConfig());
@@ -115,7 +115,7 @@ public abstract class BaseWebCrawler {
     }
   }
 
-  protected boolean isClean(){
+  protected boolean isClean() {
     return Boolean.TRUE;
   }
 
@@ -127,6 +127,15 @@ public abstract class BaseWebCrawler {
     getUrlPool().clear(crawlerUuid);
     getResponseResultService().clear(crawlerUuid);
     log.info("清理结束....");
+  }
+
+  /**
+   * 设置爬虫的唯一标识
+   *
+   * @return String
+   */
+  protected String crawlerUuid() {
+    return getClass().getSimpleName();
   }
 
   private void saveResponseReult(Response response) {
@@ -145,8 +154,7 @@ public abstract class BaseWebCrawler {
   }
 
   /**
-   * 持久化资源
-   * 重复的资源不进行初始化，该怎么处理 TODO
+   * 持久化资源 重复的资源不进行初始化，该怎么处理 TODO
    */
   private void _initURL() {
     List<URL> urls = initURL();
@@ -180,7 +188,7 @@ public abstract class BaseWebCrawler {
         if (!StringUtils.isEmpty(response.getHtml())) {
           response.setType(crawlerUuid);
           saveResponseReult(response);
-        }else{
+        } else {
           // TODO
           // Python中是在这里调用的
           log.debug("URL:{}", url.toString());
@@ -199,7 +207,7 @@ public abstract class BaseWebCrawler {
   /**
    * 1. 这个有个问题，就是findAll的话，会将所有数据取出来，占据内存比较大。 <br>
    */
-  private List<Response> _parsers(){
+  private List<Response> _parsers() {
     List<Response> list = responseResultService.findAllIsEnable();
     int index = 0;
     for (Response r : list) {
@@ -220,6 +228,7 @@ public abstract class BaseWebCrawler {
 
   /**
    * 通知
+   *
    * @param e 异常信息
    */
   private void notice(Exception e) {
@@ -227,14 +236,8 @@ public abstract class BaseWebCrawler {
   }
 
   /**
-   * 设置爬虫的唯一标识
-   *
-   * @return String
-   */
-  protected abstract String crawlerUuid();
-
-  /**
    * 站点名称设置
+   *
    * @return 站点名称
    */
   protected abstract String getSiteName();
@@ -255,16 +258,18 @@ public abstract class BaseWebCrawler {
 
   /**
    * 解析方法
+   *
    * @param r {@link Response}
    * @return Boolean
    */
-  protected abstract Boolean parser(Response r) ;
+  protected abstract Boolean parser(Response r);
 
   /**
    * 消息订阅
+   *
    * @param responses 爬虫的启动时间
    */
   protected abstract void notice(List<Response> responses) throws IOException;
 
-  protected abstract Map<String,Object> getCrawlerConfig();
+  protected abstract Map<String, Object> getCrawlerConfig();
 }
