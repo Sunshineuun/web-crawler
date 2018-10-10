@@ -2,6 +2,8 @@ package com.qiushengming.common;
 
 import com.qiushengming.entity.BaseEntity;
 import com.qiushengming.service.impl.AbstractManagementService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.FileSystemResource;
@@ -25,6 +27,8 @@ import java.util.Map;
 public class EmailTool
     extends AbstractManagementService<BaseEntity>
     implements InitializingBean {
+
+  private Logger log = LoggerFactory.getLogger(getClass());
 
   @Autowired
   private JavaMailSender sender;
@@ -69,6 +73,7 @@ public class EmailTool
         }
       }
       sender.send(message);
+      log.info("邮件已发送。");
     } catch (MessagingException e) {
       e.printStackTrace();
     }
