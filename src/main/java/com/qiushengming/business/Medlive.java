@@ -38,15 +38,9 @@ import java.util.regex.Pattern;
  */
 @Service("Medlive")
 public class Medlive extends BaseWebCrawler {
-  private static final String[] KEYS = {"*超说明书*", ".*超药物说明书*", "*超药品说明书*",};
+  protected static final String[] KEYS = {"*超说明书*", ".*超药物说明书*", "*超药品说明书*",};
   private static final Gson GSON = new Gson();
   private static final String URL_TEMPLATE = "http://guide.medlive.cn/ajax/load_more.ajax.php";
-  private static Boolean isLock = Boolean.FALSE;
-
-  @Override
-  public String crawlerUuid() {
-    return getClass().getSimpleName();
-  }
 
   @Override
   protected String getSiteName() {
@@ -64,22 +58,9 @@ public class Medlive extends BaseWebCrawler {
    */
   @Async
   @Override
-  @Scheduled(cron = "0 0/5 * * * ?")
+  @Scheduled(cron = "0 0 0 0 1/1 ?")
   public void start(){
-    log.debug("启动 ------");
-    if(isLock){
-      log.debug("已有线程进行中 ------");
-      return;
-    }
-
-    log.debug("进行数据采集 ------");
-
-    isLock = Boolean.TRUE;
     super.start();
-
-    crawlerConfig.put("page", -1);
-    getConfigService().updateConfig(crawlerConfig);
-    isLock = Boolean.FALSE;
   }
 
   @Override
@@ -119,7 +100,7 @@ public class Medlive extends BaseWebCrawler {
     return urls;
   }
 
-  private URL getURL(Map<String,Object> params) {
+  protected URL getURL(Map<String,Object> params) {
     URL url = new URL();
     url.setUrl(URL_TEMPLATE);
     // 组建参数
@@ -127,7 +108,7 @@ public class Medlive extends BaseWebCrawler {
     return url;
   }
 
-  private Map<String,Object> getParmas(int page) {
+  protected Map<String,Object> getParmas(int page) {
     Map<String, Object> map = new HashMap<>();
     map.put("branch", 0);
     map.put("sort", "publish");
@@ -139,7 +120,7 @@ public class Medlive extends BaseWebCrawler {
 
   @Override
   protected Response download(URL url) {
-    log.debug("page is:{}",  url.getParams().get("page"));
+    log.info("page is:{}",  url.getParams().get("page"));
 
     updateConfig(url);
 
@@ -155,10 +136,6 @@ public class Medlive extends BaseWebCrawler {
       if (!bool) {
         break;
       }
-    }
-
-    if (((int)url.getParams().get("page")) == 150) {
-
     }
 
     // 如果当前文章列表中的所有文章都日期都大于预设日期，那么将进行翻页操作
@@ -179,7 +156,7 @@ public class Medlive extends BaseWebCrawler {
    * 这里交互会很频繁，是否需要每次都往数据库中提交呢
    * @param url {@link URL}
    */
-  private void updateConfig(URL url) {
+  void updateConfig(URL url) {
     crawlerConfig.put("page", url.getParams().get("page"));
     crawlerConfig.setUrl(url);
     getConfigService().updateConfig(crawlerConfig);
@@ -222,21 +199,7 @@ public class Medlive extends BaseWebCrawler {
    */
   @Override
   protected void notice(List<Response> responses) throws IOException {
-    List<Data> notices = new ArrayList<>();
-    for (Response r : responses) {
-      for (Data d : r.getDatas()) {
-        if (!StringUtils.isEmpty(d.get("title"))) {
-          String title = String.valueOf(d.get("title"));
-          for (String k : KEYS) {
-            if (Pattern.matches(k.replaceAll("\\*", ".*"), title)) {
-              d.setKey(k);
-              notices.add(d);
-              break;
-            }
-          }
-        }
-      }
-    }
+    List<Data> notices = getNoticeData(responses);
 
     //数据转换
     String[] titles = {"名称", "标题", "URL", "KEY", "ID"};
@@ -276,7 +239,32 @@ public class Medlive extends BaseWebCrawler {
   }
 
   @Override
+  protected void afterOption() {
+    crawlerConfig.put("page", -1);
+    getConfigService().updateConfig(crawlerConfig);
+  }
+
+  @Override
   protected boolean isClean() {
     return ((Integer)crawlerConfig.get("page")) == -1;
+  }
+
+  protected List<Data> getNoticeData(List<Response> responses) {
+    List<Data> notices = new ArrayList<>();
+    for (Response r : responses) {
+      for (Data d : r.getDatas()) {
+        if (!StringUtils.isEmpty(d.get("title"))) {
+          String title = String.valueOf(d.get("title"));
+          for (String k : KEYS) {
+            if (Pattern.matches(k.replaceAll("\\*", ".*"), title)) {
+              d.setKey(k);
+              notices.add(d);
+              break;
+            }
+          }
+        }
+      }
+    }
+    return notices;
   }
 }
