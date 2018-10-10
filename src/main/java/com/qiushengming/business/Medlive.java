@@ -250,6 +250,11 @@ public class Medlive extends BaseWebCrawler {
     return ((Integer)crawlerConfig.get("page")) == -1;
   }
 
+  /**
+   * 在获取通知的数据是，需要将已经过滤过的数据排除掉。这个操作需要再考虑，TODO
+   * @param responses {@link Response}
+   * @return {@link Data}s
+   */
   protected List<Data> getNoticeData(List<Response> responses) {
     List<Data> notices = new ArrayList<>();
     for (Response r : responses) {
