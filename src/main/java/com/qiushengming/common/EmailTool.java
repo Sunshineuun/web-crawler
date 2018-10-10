@@ -47,7 +47,7 @@ public class EmailTool
    * 发送email
    *
    * @param content 正文内容
-   * @param affix   附件
+   * @param affix 附件
    */
   public void sendSimpleMail(String content, List<File> affix) {
     MimeMessage message;
@@ -75,8 +75,7 @@ public class EmailTool
   }
 
   /**
-   * 更新配置信息 <br>
-   * 1. 定时更新配置信息,每天0点，12点更新；
+   * 更新配置信息 <br> 1. 定时更新配置信息,每天0点，12点更新；
    */
   @Scheduled(cron = "0 0 0,12 * * ?")
   public void updateConfig() {
@@ -89,7 +88,14 @@ public class EmailTool
    * @return String[]
    */
   private String[] getEmailTo() {
-    return (String[]) ((List)configMap.get("to")).toArray();
+    List tos = ((List) configMap.get("to"));
+    String[] toArr = new String[tos.size()];
+    int index = 0;
+    for (Object o : tos) {
+      toArr[index] = String.valueOf(o);
+      index++;
+    }
+    return toArr;
   }
 
   /**
@@ -136,9 +142,9 @@ public class EmailTool
       // 如果不存在，则用代码中的默认配置进行初始化
       Map<String, Object> map = new HashMap<>();
       map.put("key", "email");
-      String[] tos = {"qiushengming@aliyun.com"};
+      String[] tos = {"qiushengming@aliyun.com","qiushengming@aliyun.com"};
       map.put("to", tos);
-      map.put("from", "qiushengming@tech-winning");
+      map.put("from", "qiushengming@tech-winning.com");
       map.put("subject", "爬虫通知");
       getMongoOperations().save(map, collectionName);
       configMap.putAll(map);
