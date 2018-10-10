@@ -30,6 +30,8 @@ public abstract class BaseWebCrawler {
 
   protected CrawlerConfig crawlerConfig;
 
+  protected static Boolean isLock = Boolean.FALSE;
+
   @Resource(name = "URLPool")
   private URLPool urlPool;
 
@@ -76,28 +78,47 @@ public abstract class BaseWebCrawler {
    * 启动爬虫
    */
   public void start() {
-    // 0. init
-    initConfig();
-    // 1. 持久化资源
-    log.info("初始化URL");
-    _initURL();
-    // 2. 下载数据
-    log.info("开始下载");
-    _downloads();
-    // 3. 解析数据
-    log.info("开始解析");
-    List<Response> responses = _parsers();
-    // 4. 通知
-    log.info("XSSF");
     try {
+      log.debug("启动 ------");
+      if (isLock) {
+        log.debug("已有线程进行中 ------");
+        return;
+      }
+      log.debug("进行数据采集 ------");
+
+      isLock = Boolean.TRUE;
+
+      // 0. init
+      initConfig();
+      // 1. 持久化资源
+      log.info("初始化URL");
+      _initURL();
+      // 2. 下载数据
+      log.info("开始下载");
+      _downloads();
+      // 3. 解析数据
+      log.info("开始解析");
+      List<Response> responses = _parsers();
+      // 4. 通知
+      log.info("XSSF");
+
       notice(responses);
-    } catch (IOException e) {
+
+      // 5. 更新配置信息
+      configService.updateConfig(crawlerConfig);
+      // 6. 退出
+      quit();
+
+      afterOption();
+    } catch (Exception e) {
       log.error("{}", e);
     }
-    // 5. 更新配置信息
-    configService.updateConfig(crawlerConfig);
-    // 6. 退出
-    quit();
+
+    isLock = Boolean.FALSE;
+  }
+
+  protected void afterOption(){
+
   }
 
   protected void initConfig() {
@@ -173,14 +194,14 @@ public abstract class BaseWebCrawler {
   private void _downloads() {
     URL url;
     long index = -1L;
-    StopWatch stopWatch = new StopWatch();
+    //StopWatch stopWatch = new StopWatch();
     while ((url = getUrlPool().get()) != null) {
       try {
         index++;
         if (index % 100 == 0) {
           log.debug("已请求的数量：{}", index);
         }
-        stopWatch.start();
+        //stopWatch.start();
 
         Response response = download(url);
 
@@ -194,8 +215,8 @@ public abstract class BaseWebCrawler {
           log.debug("URL:{}", url.toString());
         }
 
-        stopWatch.stop();
-        log.info("当前请求耗时" + stopWatch.getTotalTimeMillis());
+        //stopWatch.stop();
+        //log.info("当前请求耗时" + stopWatch.getTotalTimeMillis());
       } catch (Exception e) {
         log.error("{}", e);
         // 出现异常需要进行通知
