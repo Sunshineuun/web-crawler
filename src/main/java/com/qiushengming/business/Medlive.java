@@ -170,7 +170,7 @@ public class Medlive extends BaseWebCrawler {
     try {
       Map map = GSON.fromJson(r.getHtml(), Map.class);
       String dataListKey = "data_list";
-      // 需要验证(map.get(dataListKey) instanceof List)是否成立 TODO
+      // 需要验证(map.get(dataListKey) instanceof List)是否成立
       if (map != null && map.containsKey(dataListKey)
           && map.get(dataListKey) instanceof List) {
         for (Object o : (List) map.get(dataListKey)) {
