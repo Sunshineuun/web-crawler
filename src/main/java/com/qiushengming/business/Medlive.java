@@ -53,12 +53,12 @@ public class Medlive extends BaseWebCrawler {
   }
 
   /**
-   * 每月1日执行一次 cron = "0 0 0 0 1/1 ?"
+   * 每月1日执行一次 cron = "0 0 0 1 * ? "
    *
    */
   @Async
   @Override
-  @Scheduled(cron = "0 0 0 0 1/1 ?")
+  @Scheduled(cron = "0 0 0 1 * ? ")
   public void start(){
     super.start();
   }
