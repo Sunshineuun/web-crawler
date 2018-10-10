@@ -30,7 +30,7 @@ public abstract class BaseWebCrawler {
 
   protected CrawlerConfig crawlerConfig;
 
-  protected static Boolean isLock = Boolean.FALSE;
+  protected Boolean isLock = Boolean.FALSE;
 
   @Resource(name = "URLPool")
   private URLPool urlPool;
