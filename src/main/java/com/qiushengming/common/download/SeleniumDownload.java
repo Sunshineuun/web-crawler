@@ -86,7 +86,7 @@ public class SeleniumDownload implements Download {
 
   @Deprecated
   @Override
-  public Response formSubmit(URL url) {
+  public Response fromSubmit(URL url) {
     log.info("未来实现");
     return null;
   }
