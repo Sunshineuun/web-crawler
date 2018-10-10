@@ -124,7 +124,7 @@ public class Medlive extends BaseWebCrawler {
 
     updateConfig(url);
 
-    Response response = getDownload().get(url);
+    Response response = getDownload().fromSubmit(url);
 
     // 接着判断获取文章的日期是否大于配置设置的日期
     parser(response);
