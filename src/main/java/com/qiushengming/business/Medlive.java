@@ -219,9 +219,10 @@ public class Medlive extends BaseWebCrawler {
     Sheet sheet = DataToExecl.createSheet(wb);
     DataToExecl.writeData(Arrays.asList(titles), datas, sheet);
 
-    File file = new File(String.format("%s/医脉通_%s.xlsx", TEMP_PATH, DateUtils.nowDate()));
+    File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
+        .nowDate()));
     wb.write(new FileOutputStream(file));
-    getEmailTool().sendSimpleMail("", file);
+    getEmailTool().sendSimpleMail(getSiteName(), file);
   }
 
   @Override
