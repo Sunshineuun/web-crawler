@@ -9,6 +9,7 @@ import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.BasicCookieStore;
@@ -49,6 +50,55 @@ public class HttpClinentDownload implements Download {
    */
   @Override
   public Response get(URL url) {
+    Response responseResult = new Response(url);
+
+    HttpGet get = getHttpGet(url);
+    try {
+      HttpResponse response = getClient().execute(get);
+      Assert.notNull(response, "response is not null");
+
+      if (response.getStatusLine().getStatusCode() == SC_OK) {
+        // 目前暂时先将解析编码设置为UTF-8,后续需要调整的。由对应的站点告知，编码是什么
+        responseResult.setHtml(EntityUtils.toString(response.getEntity(), "UTF-8"));
+      } else {
+        // URL - 响应状态码
+        log.info(String.format("%s - %s", url, response.getStatusLine().getStatusCode()));
+      }
+
+    }catch (ConnectTimeoutException e1){
+      log.error("超时 - {}", e1);
+    }catch (IOException e) {
+      log.error("{}", e);
+    }
+    return responseResult;
+  }
+
+  /**
+   * 创建post请求
+   * @param url String
+   * @return {@link HttpPost}
+   */
+  private HttpGet getHttpGet(URL url) {
+    // 配置超时时间
+    RequestConfig config = RequestConfig.custom()
+        .setConnectTimeout(getTimeout())
+        .setConnectionRequestTimeout(getTimeout())
+        .setSocketTimeout(getTimeout())
+        .setRedirectsEnabled(true)
+        .build();
+
+    HttpGet get = new HttpGet(url.getUrl());
+    get.setConfig(config);
+
+
+    Header[] headers = getHeaders(url);
+    get.setHeaders(headers);
+
+    return get;
+  }
+
+  @Override
+  public Response fromSubmit(URL url) {
     Response responseResult = new Response(url);
 
     HttpPost post = getHttpPost(url);
@@ -113,6 +163,8 @@ public class HttpClinentDownload implements Download {
 
     headers.add(new BasicHeader("User-Agent", getUserAgent()));
     headers.add(new BasicHeader("Connection", "keep-alive"));
+    headers.add(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+    headers.add(new BasicHeader("Accept", "text/plain;charset=utf-8"));
 
     if (!CollectionUtils.isEmpty(url.getHeaders())) {
       for(String key: url.getHeaders().keySet()){
