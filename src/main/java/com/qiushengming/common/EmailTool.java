@@ -23,12 +23,21 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * 问题：
+ * 1. 当附件名称过长，会导致附件被转换为[ATT_000728.dat]这样的格式，如果将后缀改成对应的后缀还是能打开的。
+ * 尽量避免文件名过长。
+ */
 @Service("EmailTool")
 public class EmailTool
     extends AbstractManagementService<BaseEntity>
     implements InitializingBean {
 
   private Logger log = LoggerFactory.getLogger(getClass());
+  static {
+    // 解决问题-1，附件名称过长的问题。参考地址：https://blog.csdn.net/z69183787/article/details/79238735
+    System.setProperty("mail.mime.splitlongparameters","false");
+  }
 
   @Autowired
   private JavaMailSender sender;
