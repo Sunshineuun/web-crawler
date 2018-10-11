@@ -1,5 +1,6 @@
 package com.qiushengming.utils;
 
+import com.qiushengming.common.Symbol;
 import com.qiushengming.execptions.ReadExcelException;
 import org.apache.http.client.utils.DateUtils;
 import org.apache.poi.ss.usermodel.*;
@@ -115,7 +116,7 @@ public class ExcelUtils {
         }
       }
 
-      return "";
+      return Symbol.BLANK;
     }
     catch (Exception e) {
       throw new ReadExcelException(e);
@@ -174,7 +175,7 @@ public class ExcelUtils {
               sheet.setDisplayFormulas(true);
               return nf.format(cell.getNumericCellValue());
             case BLANK:
-              return "";
+              return Symbol.BLANK;
           }
         }
       }
@@ -235,7 +236,7 @@ public class ExcelUtils {
               if (type.equals(ExcelUtils.TYPE_NUMERIC)) {
                 return "0";
               }
-              return "";
+              return Symbol.BLANK;
           }
         }
         else {
@@ -243,11 +244,11 @@ public class ExcelUtils {
             return "0";
           }
           else {
-            return "";
+            return Symbol.BLANK;
           }
         }
       }
-      return "";
+      return Symbol.BLANK;
     }
     catch (Exception e) {
       throw new ReadExcelException(e);
