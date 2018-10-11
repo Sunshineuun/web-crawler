@@ -26,10 +26,10 @@ public class URL
   private int tree = 0;
   /**
    * 使用上限 <br>
-   * 默认值 - 5
+   * 默认值 - 0,上限次数由其它来限定
    */
   @Field("USE_LIMIT")
-  private int uselimit = 5;
+  private int uselimit = 0;
 
   /**
    * 请求参数 <br>
