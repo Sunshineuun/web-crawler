@@ -28,10 +28,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 /**
- * 国家药品不良反应监测中心 - http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb/ 1.数据监测地址 *
- * 1. 数据监测地址
- *  * http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb/index%s.html
- * 2. CDAADRypblfyxxtb 含义 - 药品不良反应信息通报
+ * 国家药品不良反应监测中心 - http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb/ 1.数据监测地址 * 1. 数据监测地址 *
+ * http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb/index%s.html 2. CDAADRypblfyxxtb 含义 - 药品不良反应信息通报
  */
 @Service("CDAADRypblfyxxtb")
 public class CDAADRypblfyxxtb extends Medlive {
@@ -119,18 +117,23 @@ public class CDAADRypblfyxxtb extends Medlive {
       if (el == null) {
         return Boolean.FALSE;
       }
-      
+
       Map<String, Object> map = new HashMap<>();
       for (Element e : el.getAllElements()) {
         switch (e.tagName()) {
           case "li":
             Element a = e.selectFirst("a[href]");
             map.put("title", a.text());
-            map.put("html_url", URL_DOMAIN + a.attr("href"));
+
+            String url = a.attr("href");
+            if (StringUtils.isEmpty(url)) {
+              url = "";
+            }
+            map.put("guide_url", URL_DOMAIN + url.replaceAll("\\.", BLANK));
             break;
           case "span":
             Element span = e.selectFirst("span");
-            map.put("publish_date", span.text().replaceAll("[\\[\\]]",BLANK));
+            map.put("publish_date", span.text().replaceAll("[\\[\\]]", BLANK));
             break;
           case "br":
             Data data = new Data();
@@ -148,5 +151,9 @@ public class CDAADRypblfyxxtb extends Medlive {
       log.error("{}", e);
     }
     return Boolean.FALSE;
+  }
+
+  protected String[] getKeys() {
+    return new String[]{"*药品不良反应*", "*不良反应*", "*药品*风险*", "*药品*毒性*", "*使用*风险*",};
   }
 }
