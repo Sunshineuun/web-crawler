@@ -117,6 +117,10 @@ public abstract class BaseWebCrawler {
     isLock = Boolean.FALSE;
   }
 
+  /**
+   * 整体流程结束之后的操作
+   * 在线程解锁之前
+   */
   protected void afterOption(){
 
   }
