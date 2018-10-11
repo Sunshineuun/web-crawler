@@ -43,11 +43,11 @@ public class CDAADRypblfyxxtb extends Medlive {
   }
 
   /**
-   * 每月1日执行一次 cron = "0 0 0 1 * ? "
+   * 每周六执行一次 cron = "0 0 0 0 0 6 "
    */
   @Async
   @Override
-  @Scheduled(cron = "0 0/1 * * * ?")
+  @Scheduled(cron = "0 0 0 0 0 6 ")
   public void start() {
     super.start();
   }
