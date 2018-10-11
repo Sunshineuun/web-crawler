@@ -38,7 +38,8 @@ import java.util.regex.Pattern;
  */
 @Service("Medlive")
 public class Medlive extends BaseWebCrawler {
-  protected static final String[] KEYS = {"*超说明书*", ".*超药物说明书*", "*超药品说明书*",};
+  protected final String[] KEYS = getKeys();
+
   private static final Gson GSON = new Gson();
   private static final String URL_TEMPLATE = "http://guide.medlive.cn/ajax/load_more.ajax.php";
 
@@ -199,7 +200,7 @@ public class Medlive extends BaseWebCrawler {
    */
   @Override
   protected void notice(List<Response> responses) throws IOException {
-    List<Data> notices = getNoticeData(responses);
+     List<Data> notices = getNoticeData(responses);
 
     //数据转换
     String[] titles = {"名称", "标题", "URL", "KEY", "ID"};
@@ -272,5 +273,9 @@ public class Medlive extends BaseWebCrawler {
       }
     }
     return notices;
+  }
+
+  protected String[] getKeys() {
+    return new String[]{"*超说明书*", ".*超药物说明书*", "*超药品说明书*",};
   }
 }
