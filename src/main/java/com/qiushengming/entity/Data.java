@@ -1,5 +1,6 @@
 package com.qiushengming.entity;
 
+import com.qiushengming.common.Symbol;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -15,7 +16,7 @@ public class Data extends BaseEntity{
    * 匹配到的关键字
    */
   @Field("KEY")
-  private String key = "";
+  private String key = Symbol.BLANK;
 
   public String getResponseId() {
     return responseId;

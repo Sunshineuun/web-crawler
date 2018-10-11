@@ -1,5 +1,6 @@
 package com.qiushengming.entity;
 
+import com.qiushengming.common.Symbol;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -20,7 +21,7 @@ public class Response
     extends BaseEntity
     implements Serializable {
   @Field("HTML")
-  private String html = "";
+  private String html = Symbol.BLANK;
   @Field("URL")
   private URL url;
   @Field("DATA")
