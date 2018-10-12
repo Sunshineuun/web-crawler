@@ -36,8 +36,8 @@ public class URLPool {
    *
    * @return {@link URL}
    */
-  public URL get() {
-    return urlPoolService.getURL();
+  public URL get(String type) {
+    return urlPoolService.getURL(type);
   }
 
   /**
