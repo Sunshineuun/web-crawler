@@ -31,6 +31,10 @@ public class URLPool {
     init();
   }
 
+  public URLPoolService getUrlPoolService() {
+    return urlPoolService;
+  }
+
   /**
    * 获取资源
    *
