@@ -24,7 +24,7 @@ public class BaseEntity
    * 因为是多个站点存储在一起的，所以要以它为标识
    */
   @Field("TYPE")
-  private String type;
+  private String type = "-";
   /**
    * 备注
    */
