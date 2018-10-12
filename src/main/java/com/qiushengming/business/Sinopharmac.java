@@ -51,7 +51,7 @@ public class Sinopharmac extends Medlive {
   @Override
   protected URL getURL(Map<String, Object> params) {
     URL url = new URL();
-    url.setUrl(String.format(URL_TEMPLATE, params.get("page")));
+    url.setUrl(String.format(URL_TEMPLATE, params.get(getPageKey())));
     // 组建参数
     url.setParams(params);
     return url;
@@ -60,13 +60,13 @@ public class Sinopharmac extends Medlive {
   @Override
   protected Map<String, Object> getParmas(int page) {
     Map<String, Object> map = new HashMap<>();
-    map.put("page", page);
+    map.put(getPageKey(), page);
     return map;
   }
 
   @Override
   protected Response download(URL url) {
-    int page = (int) url.getParams().get("page");
+    int page = (int) url.getParams().get(getPageKey());
 
     log.debug("page is:{}", page);
     updateConfig(url);
@@ -169,7 +169,7 @@ public class Sinopharmac extends Medlive {
     map.put("list-time", "2005-01-01");
     map.put("start_date", "2005-01-01");
     // 当page
-    map.put("page", -1);
+    map.put(getPageKey(), -1);
     return map;
   }
 }
