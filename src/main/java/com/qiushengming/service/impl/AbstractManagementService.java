@@ -35,6 +35,11 @@ public class AbstractManagementService<T extends BaseEntity>
   }
 
   @Override
+  public void deleteByType(String type) {
+    getMongoOperations().remove(Query.query(Criteria.where("type").is(type)),getEntityClass());
+  }
+
+  @Override
   public List<T> findAllIsEnable() {
     Query query = Query.query(Criteria.where("isEnable").is(1));
     return getMongoOperations().find(query, getEntityClass());
