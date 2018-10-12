@@ -77,6 +77,14 @@ public class URL
     this.params = params;
   }
 
+  public void putParamsKey(String key, Object value) {
+    params.put(key, value);
+  }
+
+  public void removeParamsKey(String key) {
+    params.remove(key);
+  }
+
   public Map<String, String> getHeaders() {
     return headers;
   }
