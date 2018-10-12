@@ -163,6 +163,11 @@ public abstract class BaseWebCrawler {
     return getClass().getSimpleName();
   }
 
+  protected void putURL(URL url) {
+    url.setType(crawlerUuid);
+    getUrlPool().put(url);
+  }
+
   private void saveResponseReult(Response response) {
     response.setUpdateTime(new Date());
     response.setType(crawlerUuid);
@@ -189,9 +194,8 @@ public abstract class BaseWebCrawler {
     }*/
 
     for (URL url : urls) {
-      url.setType(crawlerUuid);
+      putURL(url);
     }
-    getUrlPool().put(urls);
     log.debug("共初始化资源：{}", urls.size());
   }
 
@@ -199,7 +203,7 @@ public abstract class BaseWebCrawler {
     URL url;
     long index = -1L;
     //StopWatch stopWatch = new StopWatch();
-    while ((url = getUrlPool().get()) != null) {
+    while ((url = getUrlPool().get(crawlerUuid())) != null) {
       try {
         index++;
         if (index % 100 == 0) {
