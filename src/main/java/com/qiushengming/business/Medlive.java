@@ -40,7 +40,7 @@ import java.util.regex.Pattern;
 public class Medlive extends BaseWebCrawler {
   protected final String[] KEYS = getKeys();
 
-  private static final Gson GSON = new Gson();
+  protected static final Gson GSON = new Gson();
   private static final String URL_TEMPLATE = "http://guide.medlive.cn/ajax/load_more.ajax.php";
 
   @Override
@@ -141,7 +141,7 @@ public class Medlive extends BaseWebCrawler {
 
     // 如果当前文章列表中的所有文章都日期都大于预设日期，那么将进行翻页操作
     if (bool) {
-      getUrlPool().put(getURL(getParmas(((int)url.getParams().get(getPageKey())) + 1)));
+      putURL(getURL(getParmas(((int)url.getParams().get(getPageKey())) + 1)));
     }
 
     try {
