@@ -55,8 +55,8 @@ public class CDAADRypblfyxxtb extends Medlive {
   @Override
   protected URL getURL(Map<String, Object> params) {
     String page = Symbol.BLANK;
-    if (((int) params.get("page")) > 1) {
-      page = "_" + String.valueOf(params.get("page"));
+    if (((int) params.get(getPageKey())) > 1) {
+      page = "_" + String.valueOf(params.get(getPageKey()));
     }
 
     URL url = new URL();
@@ -69,13 +69,13 @@ public class CDAADRypblfyxxtb extends Medlive {
   @Override
   protected Map<String, Object> getParmas(int page) {
     Map<String, Object> map = new HashMap<>();
-    map.put("page", page);
+    map.put(getPageKey(), page);
     return map;
   }
 
   @Override
   protected Response download(URL url) {
-    log.info("page is:{}", url.getParams().get("page"));
+    log.info("page is:{}", url.getParams().get(getPageKey()));
 
     updateConfig(url);
 
@@ -95,7 +95,7 @@ public class CDAADRypblfyxxtb extends Medlive {
 
     // 如果当前文章列表中的所有文章都日期都大于预设日期，那么将进行翻页操作
     if (bool) {
-      getUrlPool().put(getURL(getParmas(((int) url.getParams().get("page")) + 1)));
+      getUrlPool().put(getURL(getParmas(((int) url.getParams().get(getPageKey())) + 1)));
     }
 
     try {
