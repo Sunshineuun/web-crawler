@@ -67,7 +67,7 @@ public class Medlive extends BaseWebCrawler {
   @Override
   protected void initConfig() {
     super.initConfig();
-    if(((int) crawlerConfig.get("page")) == -1){
+    if(((int) crawlerConfig.get(getPageKey())) == -1){
       crawlerConfig.put("publish_date", crawlerConfig.get("start_date"));
       crawlerConfig.put("start_date", DateUtils.nowDate("yyyy-MM-dd"));
     }
@@ -85,7 +85,7 @@ public class Medlive extends BaseWebCrawler {
   protected List<URL> initURL() {
     List<URL> urls = new ArrayList<>();
 
-    int page = (int) crawlerConfig.get("page");
+    int page = (int) crawlerConfig.get(getPageKey());
     if (page == -1) {
       page = 0;
     }
@@ -115,13 +115,13 @@ public class Medlive extends BaseWebCrawler {
     map.put("sort", "publish");
     map.put("year", 0);
     map.put("type", "all");
-    map.put("page", page);
+    map.put(getPageKey(), page);
     return map;
   }
 
   @Override
   protected Response download(URL url) {
-    log.info("page is:{}",  url.getParams().get("page"));
+    log.info("page is:{}",  url.getParams().get(getPageKey()));
 
     updateConfig(url);
 
@@ -141,7 +141,7 @@ public class Medlive extends BaseWebCrawler {
 
     // 如果当前文章列表中的所有文章都日期都大于预设日期，那么将进行翻页操作
     if (bool) {
-      getUrlPool().put(getURL(getParmas(((int)url.getParams().get("page")) + 1)));
+      getUrlPool().put(getURL(getParmas(((int)url.getParams().get(getPageKey())) + 1)));
     }
 
     try {
@@ -158,7 +158,7 @@ public class Medlive extends BaseWebCrawler {
    * @param url {@link URL}
    */
   void updateConfig(URL url) {
-    crawlerConfig.put("page", url.getParams().get("page"));
+    crawlerConfig.put(getPageKey(), url.getParams().get(getPageKey()));
     crawlerConfig.setUrl(url);
     getConfigService().updateConfig(crawlerConfig);
   }
@@ -236,19 +236,19 @@ public class Medlive extends BaseWebCrawler {
     map.put("publish_date", "2005-01-01");
     map.put("start_date", "2005-01-01");
     // 当page
-    map.put("page", -1);
+    map.put(getPageKey(), -1);
     return map;
   }
 
   @Override
   protected void afterOption() {
-    crawlerConfig.put("page", -1);
+    crawlerConfig.put(getPageKey(), -1);
     getConfigService().updateConfig(crawlerConfig);
   }
 
   @Override
   protected boolean isClean() {
-    return ((Integer)crawlerConfig.get("page")) == -1;
+    return ((Integer)crawlerConfig.get(getPageKey())) == -1;
   }
 
   /**
@@ -277,5 +277,13 @@ public class Medlive extends BaseWebCrawler {
 
   protected String[] getKeys() {
     return new String[]{"*超说明书*", ".*超药物说明书*", "*超药品说明书*",};
+  }
+
+  /**
+   * 返回翻页所用到的关键字
+   * @return "page"
+   */
+  protected String getPageKey() {
+    return "page";
   }
 }
