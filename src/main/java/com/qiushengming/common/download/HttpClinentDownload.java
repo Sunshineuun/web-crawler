@@ -2,6 +2,7 @@ package com.qiushengming.common.download;
 
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
+import java.util.HashMap;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -44,7 +45,6 @@ public class HttpClinentDownload implements Download {
   }
 
   /**
-   *
    * @param url {@link URL}
    * @return String
    */
@@ -65,9 +65,9 @@ public class HttpClinentDownload implements Download {
         log.info(String.format("%s - %s", url, response.getStatusLine().getStatusCode()));
       }
 
-    }catch (ConnectTimeoutException e1){
+    } catch (ConnectTimeoutException e1) {
       log.error("超时 - {}", e1);
-    }catch (IOException e) {
+    } catch (IOException e) {
       log.error("{}", e);
     }
     return responseResult;
@@ -75,6 +75,7 @@ public class HttpClinentDownload implements Download {
 
   /**
    * 创建post请求
+   *
    * @param url String
    * @return {@link HttpPost}
    */
@@ -89,7 +90,6 @@ public class HttpClinentDownload implements Download {
 
     HttpGet get = new HttpGet(url.getUrl());
     get.setConfig(config);
-
 
     Header[] headers = getHeaders(url);
     get.setHeaders(headers);
@@ -121,9 +121,9 @@ public class HttpClinentDownload implements Download {
         log.info(String.format("%s - %s", url, response.getStatusLine().getStatusCode()));
       }
 
-    }catch (ConnectTimeoutException e1){
+    } catch (ConnectTimeoutException e1) {
       log.error("超时 - {}", e1);
-    }catch (IOException e) {
+    } catch (IOException e) {
       log.error("{}", e);
     }
     return responseResult;
@@ -131,6 +131,7 @@ public class HttpClinentDownload implements Download {
 
   /**
    * 创建post请求
+   *
    * @param url String
    * @return {@link HttpPost}
    */
@@ -146,7 +147,6 @@ public class HttpClinentDownload implements Download {
     HttpPost post = new HttpPost(url.getUrl());
     post.setConfig(config);
 
-
     Header[] headers = getHeaders(url);
     post.setHeaders(headers);
 
@@ -155,21 +155,22 @@ public class HttpClinentDownload implements Download {
 
   /**
    * 请求头设置
-   * @return {@link Header}
+   *
    * @param url {@link URL}
+   * @return {@link Header}
    */
   private Header[] getHeaders(URL url) {
+    Map<String, String> headerMap = new HashMap<>();
+    headerMap.put("User-Agent", getUserAgent());
+    headerMap.put("Connection", "keep-alive");
+    headerMap.put("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+    headerMap.put("Accept", "text/plain;charset=utf-8");
+
+    headerMap.putAll(url.getHeaders());
+
     List<Header> headers = new ArrayList<>();
-
-    headers.add(new BasicHeader("User-Agent", getUserAgent()));
-    headers.add(new BasicHeader("Connection", "keep-alive"));
-    headers.add(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
-    headers.add(new BasicHeader("Accept", "text/plain;charset=utf-8"));
-
-    if (!CollectionUtils.isEmpty(url.getHeaders())) {
-      for(String key: url.getHeaders().keySet()){
-        headers.add(new BasicHeader(key, url.getHeaders().get(key)));
-      }
+    for (String key : headerMap.keySet()) {
+      headers.add(new BasicHeader(key, url.getHeaders().get(key)));
     }
 
     Header[] h = new BasicHeader[headers.size()];
@@ -178,6 +179,7 @@ public class HttpClinentDownload implements Download {
 
   /**
    * 后续要将数据存储到数据库中随机获取
+   *
    * @return String User-Agent
    */
   private String getUserAgent() {
@@ -186,6 +188,7 @@ public class HttpClinentDownload implements Download {
 
   /**
    * 组装表单数据
+   *
    * @param url {@link URL}
    * @return {@link NameValuePair} list
    */
@@ -203,6 +206,7 @@ public class HttpClinentDownload implements Download {
 
   /**
    * 获取客户端
+   *
    * @return {@link HttpClient}
    */
   private HttpClient getClient() {
@@ -211,6 +215,7 @@ public class HttpClinentDownload implements Download {
 
   /**
    * 超时时间
+   *
    * @return int
    */
   private int getTimeout() {
