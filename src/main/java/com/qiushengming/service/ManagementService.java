@@ -15,6 +15,11 @@ public interface ManagementService<T extends BaseEntity> {
    */
   void save(T o);
 
+  /**
+   * 删除全部
+   */
+  void deleteByType(String type);
+
   List<T> findAllIsEnable();
 
   /**
