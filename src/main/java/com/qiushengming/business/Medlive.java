@@ -200,7 +200,7 @@ public class Medlive extends BaseWebCrawler {
    */
   @Override
   protected void notice(List<Response> responses) throws IOException {
-     List<Data> notices = getNoticeData(responses);
+    List<Data> notices = getNoticeData(responses);
 
     //数据转换
     String[] titles = {"名称", "标题", "URL", "KEY", "ID"};
