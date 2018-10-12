@@ -25,9 +25,10 @@ public class URLPoolServiceImpl
    * @return URL
    */
   @Override
-  public URL getURL() {
+  public URL getURL(String type) {
     Query query = new Query(Criteria.where("isEnable").is(1)
-    .and("uselimit").lte(6));
+    .and("uselimit").lte(6)
+    .and("type").is(type));
     URL url = getMongoOperations().findOne(query, getEntityClass());
 
     if (url == null) {
