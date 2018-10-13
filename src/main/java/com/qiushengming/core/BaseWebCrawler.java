@@ -84,6 +84,11 @@ public abstract class BaseWebCrawler {
         log.debug("已有线程进行中 ------");
         return;
       }
+
+      /*getUrlPool().getUrlPoolService().deleteByType(crawlerUuid());
+      getResponseResultService().deleteByType(crawlerUuid());
+      getConfigService().deleteByType(crawlerUuid());*/
+
       log.debug("进行数据采集 ------");
 
       isLock = Boolean.TRUE;
