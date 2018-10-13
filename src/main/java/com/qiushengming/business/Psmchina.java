@@ -69,7 +69,7 @@ public class Psmchina extends Medlive {
   protected List<URL> initURL() {
     String[] urlstr = {
         "http://www.psmchina.cn/safe_medicines_trends/medical_policies/",
-        /*"http://www.psmchina.cn/safe_medicines_trends/Chinese_Adverse_Drug_Reaction_Information_Bulletin/",
+        "http://www.psmchina.cn/safe_medicines_trends/Chinese_Adverse_Drug_Reaction_Information_Bulletin/",
         "http://www.psmchina.cn/safe_medicines_trends/Pharmacovigilance_News/",
         "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/ywjj",
         "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/gwyp",
@@ -78,7 +78,7 @@ public class Psmchina extends Medlive {
         "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/sxsd",
         "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/jalc",
         "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/yyaqkt",
-        "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/ysyhz",*/
+        "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/ysyhz",
     };
     List<URL> urls = new ArrayList<>();
 
@@ -208,6 +208,7 @@ public class Psmchina extends Medlive {
     return map;
   }
 
+  @Override
   protected String[] getKeys() {
     return new String[]{"*药品不良反应*", "*不良反应*", "*药品*风险*", "*药品*毒性*", "*使用*风险*",};
   }
