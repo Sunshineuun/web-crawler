@@ -1,6 +1,7 @@
 package com.qiushengming.entity;
 
 import com.google.gson.Gson;
+import java.util.UUID;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.index.Indexed;
@@ -19,7 +20,7 @@ public class BaseEntity
 
   @Id
   @Indexed
-  private String id;
+  private String id = UUID.randomUUID().toString();
   /**
    * 因为是多个站点存储在一起的，所以要以它为标识
    */
