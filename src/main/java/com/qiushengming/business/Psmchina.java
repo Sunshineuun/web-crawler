@@ -1,20 +1,11 @@
 package com.qiushengming.business;
 
-import static com.qiushengming.common.Symbol.BLANK;
-
-import com.qiushengming.common.Symbol;
 import com.qiushengming.common.download.Download;
 import com.qiushengming.common.download.HttpClinentDownload;
-import com.qiushengming.core.BaseWebCrawler;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
 import com.qiushengming.utils.DateUtils;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -22,6 +13,13 @@ import org.jsoup.nodes.Element;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static com.qiushengming.common.Symbol.BLANK;
 
 /**
  * 药品安全合作联盟 - http://www.psmchina.cn/index <br> 1. 国内最新医药政策 - http://www.psmchina.cn/safe_medicines_trends/medical_policies/
@@ -34,6 +32,7 @@ import org.springframework.stereotype.Service;
  * 问题
  *  1. 关于HTTP 406问题排查
  *    参考地址 - http://mobile.51cto.com/hot-558405.htm
+ * @author MinMin
  */
 @Service("Psmchina")
 public class Psmchina extends Medlive {
@@ -111,7 +110,7 @@ public class Psmchina extends Medlive {
       url.removeParamsKey(getPageKey());
     }
 
-    Response response = getDownload().fromData(url);
+    Response response = getDownload().fromSubmit(url);
 
     if (page == 1) {
       url.putParamsKey(getPageKey(), 1);
@@ -157,14 +156,16 @@ public class Psmchina extends Medlive {
           Element a = e.selectFirst("h4 > a");
           String title = a.attr("title");
           String url = URL_DOMAIN + a.attr("href");
-          String dsc = e.selectFirst("p.p1 > a").attr("title"); // 描述
-          String publish_date = e.selectFirst("p.p2").text().replaceAll("[^0-9^\\-]", BLANK); // 日期
+          // 描述
+          String dsc = e.selectFirst("p.p1 > a").attr("title");
+          // 日期
+          String publishDate = e.selectFirst("p.p2").text().replaceAll("[^0-9^\\-]", BLANK);
 
           Map<String, Object> map = new HashMap<>();
           map.put("title", title);
           map.put("guide_url", url);
           map.put("dsc", dsc);
-          map.put("publish_date", publish_date);
+          map.put("publish_date", publishDate);
 
           Data data = new Data();
           data.setResponseId(r.getId());
@@ -194,6 +195,8 @@ public class Psmchina extends Medlive {
 
     Map<String, String> headers = new HashMap<>();
     headers.put("Accept", "*/*");
+    headers.put("Content-Type", "application/x-www-form-urlencoded; charset=UTF-8");
+    headers.put("Accept-Encoding", "gzip, deflate");
     url.setHeaders(headers);
     return url;
   }
