@@ -91,6 +91,13 @@ public class SeleniumDownload implements Download {
     return null;
   }
 
+  @Deprecated
+  @Override
+  public Response fromData(URL url) {
+    log.info("未来实现");
+    return null;
+  }
+
   public void quit() {
     if (driver != null) {
       driver.quit();
