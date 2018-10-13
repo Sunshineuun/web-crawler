@@ -2,7 +2,6 @@ package com.qiushengming.common.download;
 
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
-import java.util.HashMap;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -21,7 +20,6 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +28,7 @@ import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -101,6 +100,7 @@ public class HttpClinentDownload implements Download {
     return get;
   }
 
+  @Override
   public Response fromData(URL url) {
     Response responseResult = new Response(url);
 
