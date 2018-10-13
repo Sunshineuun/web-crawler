@@ -24,4 +24,6 @@ public interface Download {
    * @return 一般返回HTML
    */
   Response fromSubmit(URL url);
+
+  Response fromData(URL url);
 }
