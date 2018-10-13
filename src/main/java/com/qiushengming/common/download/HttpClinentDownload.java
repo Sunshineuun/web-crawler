@@ -13,11 +13,15 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectTimeoutException;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.HttpMultipartMode;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
 import org.apache.http.impl.client.BasicCookieStore;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -95,6 +99,42 @@ public class HttpClinentDownload implements Download {
     get.setHeaders(headers);
 
     return get;
+  }
+
+  public Response fromData(URL url) {
+    Response responseResult = new Response(url);
+
+    MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+    builder.setCharset(java.nio.charset.Charset.forName("UTF-8"));
+    builder.setMode(HttpMultipartMode.BROWSER_COMPATIBLE);
+
+    for (Map.Entry<String, Object> entry : url.getParams().entrySet()) {
+      if(entry.getValue() == null)
+        continue;
+      // 类似浏览器表单提交，对应input的name和value
+      builder.addTextBody(entry.getKey(), String.valueOf(entry.getValue()), ContentType.TEXT_PLAIN);
+    }
+
+    HttpPost post = getHttpPost(url);
+    post.setEntity(builder.build());
+
+    try {
+      HttpResponse response = getClient().execute(post);
+      Assert.notNull(response, "response is not null");
+
+      if (response.getStatusLine().getStatusCode() == SC_OK) {
+        responseResult.setHtml(EntityUtils.toString(response.getEntity()));
+      } else {
+        // URL - 响应状态码
+        log.info(String.format("%s - %s", url, response.getStatusLine().getStatusCode()));
+      }
+
+    } catch (ConnectTimeoutException e1) {
+      log.error("超时 - {}", e1);
+    } catch (IOException e) {
+      log.error("{}", e);
+    }
+    return responseResult;
   }
 
   @Override
