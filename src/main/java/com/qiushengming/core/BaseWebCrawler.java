@@ -26,7 +26,7 @@ public abstract class BaseWebCrawler {
 
   protected Logger log = LoggerFactory.getLogger(getClass());
 
-  protected Download download = getDownload();
+  protected Download download = initDownload();
 
   protected CrawlerConfig crawlerConfig;
 
@@ -45,6 +45,10 @@ public abstract class BaseWebCrawler {
   private EmailTool emailTool;
 
   protected Download getDownload() {
+    return download;
+  }
+
+  protected Download initDownload(){
     return new SeleniumDownload(Boolean.FALSE);
   }
 
