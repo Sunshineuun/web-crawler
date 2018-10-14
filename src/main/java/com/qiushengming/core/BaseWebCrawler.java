@@ -11,7 +11,7 @@ import com.qiushengming.service.CrawlerConfigService;
 import com.qiushengming.service.ResponseResultService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.util.StopWatch;
+import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
 import javax.annotation.Resource;
@@ -130,12 +130,19 @@ public abstract class BaseWebCrawler {
 
   }
 
+  /**
+   * map.putAll(null)，会报错
+   */
   protected void initConfig() {
     crawlerConfig = configService.findConfigByCrawlerUUID(crawlerUuid);
     if (crawlerConfig == null || crawlerConfig.getConfig().isEmpty()) {
       crawlerConfig = new CrawlerConfig();
       crawlerConfig.setId(crawlerUuid);
-      crawlerConfig.putAll(getCrawlerConfig());
+
+      Map<String, Object> otherConfig = getCrawlerConfig();
+      if (!CollectionUtils.isEmpty(otherConfig)) {
+        crawlerConfig.putAll(otherConfig);
+      }
       configService.save(crawlerConfig);
     }
 
