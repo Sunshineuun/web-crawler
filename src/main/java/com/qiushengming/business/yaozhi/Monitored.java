@@ -4,6 +4,10 @@ import com.qiushengming.core.BaseWebCrawler;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
+import com.qiushengming.utils.DataToExecl;
+import com.qiushengming.utils.DateUtils;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -11,11 +15,10 @@ import org.jsoup.select.Elements;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 辅助与重点监控用药 - https://db.yaozh.com/monitored?p=4&pageSize=30
@@ -40,7 +43,7 @@ public class Monitored extends BaseWebCrawler{
   }
 
   @Override
-  @Scheduled(cron = "0 1/1 * * * ? ")
+  @Scheduled(cron = "0 0/1 * * * ? ")
   public void start() {
     super.start();
   }
@@ -131,7 +134,23 @@ public class Monitored extends BaseWebCrawler{
    */
   @Override
   protected void notice(List<Response> responses) throws IOException {
+    List<Map<String, Object>> datas = new ArrayList<>();
+    for (Response r : responses) {
+      for (Data d : r.getDatas()) {
+        datas.add(d.getData());
+      }
+    }
 
+    //数据 to Excel
+    SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
+    Sheet sheet = DataToExecl.createSheet(wb);
+    DataToExecl.writeData(Arrays.asList(TITLE_KEY), datas, sheet);
+
+    File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
+        .nowDate()));
+    wb.write(new FileOutputStream(file));
+
+    log.info("文件存储路径：{}", file.getAbsolutePath());
   }
 
   @Override
