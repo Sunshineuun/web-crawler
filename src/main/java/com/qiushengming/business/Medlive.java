@@ -49,7 +49,7 @@ public class Medlive extends BaseWebCrawler {
   }
 
   @Override
-  protected Download getDownload() {
+  protected Download initDownload() {
     return new HttpClinentDownload();
   }
 
