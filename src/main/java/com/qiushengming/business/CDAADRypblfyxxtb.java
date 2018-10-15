@@ -6,23 +6,13 @@ import com.qiushengming.common.Symbol;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
-import com.qiushengming.utils.DataToExecl;
 import com.qiushengming.utils.DateUtils;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
@@ -35,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class CDAADRypblfyxxtb extends Medlive {
 
   private static final String URL_DOMAIN = "http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb";
-  private static final String URL_TEMPLATE = "http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb/index%s.html";
+  private static final String URL_TEMPLATE = URL_DOMAIN + "/index%s.html";
 
   @Override
   protected String getSiteName() {
