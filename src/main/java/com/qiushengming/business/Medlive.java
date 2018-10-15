@@ -269,7 +269,9 @@ public class Medlive extends BaseWebCrawler {
   }
 
   protected String[] getKeys() {
-    return new String[]{"*超说明书*", ".*超药物说明书*", "*超药品说明书*",};
+    return new String[]{"*超说明书*", "*超药物说明书*", "*超药品说明书*",
+        "*妊娠期*药物*", "*哺乳期*药物*", "*老年人*慎用药*", "*用药*专家共识*",
+        "*药物*专家共识*", "*专家*意见*"};
   }
 
   /**
