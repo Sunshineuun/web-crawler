@@ -148,7 +148,7 @@ public class Medlive extends BaseWebCrawler {
    *
    * @param url {@link URL}
    */
-  void updateConfig(URL url) {
+  protected void updateConfig(URL url) {
     crawlerConfig.put(getPageKey(), url.getParams().get(getPageKey()));
     crawlerConfig.setUrl(url);
     getConfigService().updateConfig(crawlerConfig);
