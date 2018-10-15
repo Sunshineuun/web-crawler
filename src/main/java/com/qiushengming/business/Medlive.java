@@ -23,21 +23,14 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * 医脉通监测 - http://guide.medlive.cn/
- * 1. 数据请求的地址
- *  * http://guide.medlive.cn/ajax/load_more.ajax.php?branch=0&sort=publish&year=0&type=all&page=6
- *  * branch=0 ?
- *  * sort=publish 排序
- *  * year=0
- *  * type=all
- *  * page=6
- * 2. 数据请求是通过表单提交的方式进行查询的
- *  * 可以观察Headers中，Query String Parameters 和 Form Data 在后台获取是不一样的。
- * 3. 下载的内容进行解析
- *  * 解析存储的速度有点慢，并且数据更新错了，之前指定的Class错了
+ * 医脉通监测 - http://guide.medlive.cn/ 1. 数据请求的地址 * http://guide.medlive.cn/ajax/load_more.ajax.php?branch=0&sort=publish&year=0&type=all&page=6
+ * * branch=0 ? * sort=publish 排序 * year=0 * type=all * page=6 2. 数据请求是通过表单提交的方式进行查询的 *
+ * 可以观察Headers中，Query String Parameters 和 Form Data 在后台获取是不一样的。 3. 下载的内容进行解析 *
+ * 解析存储的速度有点慢，并且数据更新错了，之前指定的Class错了
  */
 @Service("Medlive")
 public class Medlive extends BaseWebCrawler {
+
   protected final String[] KEYS = getKeys();
 
   protected static final Gson GSON = new Gson();
@@ -55,30 +48,27 @@ public class Medlive extends BaseWebCrawler {
 
   /**
    * 每月1日执行一次 cron = "0 0 0 1 * ? "
-   *
    */
   @Async
   @Override
   @Scheduled(cron = "0 0 0 1 * ? ")
-  public void start(){
+  public void start() {
     super.start();
   }
 
   @Override
   protected void initConfig() {
     super.initConfig();
-    if(((int) crawlerConfig.get(getPageKey())) == -1){
+    if (((int) crawlerConfig.get(getPageKey())) == -1) {
       crawlerConfig.put("publish_date", crawlerConfig.get("start_date"));
       crawlerConfig.put("start_date", DateUtils.nowDate("yyyy-MM-dd"));
     }
   }
 
   /**
-   * 1. 断掉有两种情况如下：
-   *  * 当前请求结束了
-   *    1）会根据当前的page+1，新增一个URL
-   *  * 当前请求没有结束；进行到一半的时候，例如下载的内容并且保存了，但是URL未更新（这里也不影响，无非再下载一遍咯）
-   *    2）直接使用当前的page
+   * 1. 断掉有两种情况如下： * 当前请求结束了 1）会根据当前的page+1，新增一个URL * 当前请求没有结束；进行到一半的时候，例如下载的内容并且保存了，但是URL未更新（这里也不影响，无非再下载一遍咯）
+   * 2）直接使用当前的page
+   *
    * @return {@link URL}
    */
   @Override
@@ -97,11 +87,11 @@ public class Medlive extends BaseWebCrawler {
     }
 
     // 决定偷偷懒了，一个月最多更新100页吧。
-    urls.add(getURL(getParmas(page+1)));
+    urls.add(getURL(getParmas(page + 1)));
     return urls;
   }
 
-  protected URL getURL(Map<String,Object> params) {
+  protected URL getURL(Map<String, Object> params) {
     URL url = new URL();
     url.setUrl(URL_TEMPLATE);
     // 组建参数
@@ -109,7 +99,7 @@ public class Medlive extends BaseWebCrawler {
     return url;
   }
 
-  protected Map<String,Object> getParmas(int page) {
+  protected Map<String, Object> getParmas(int page) {
     Map<String, Object> map = new HashMap<>();
     map.put("branch", 0);
     map.put("sort", "publish");
@@ -121,7 +111,7 @@ public class Medlive extends BaseWebCrawler {
 
   @Override
   protected Response download(URL url) {
-    log.info("page is:{}",  url.getParams().get(getPageKey()));
+    log.info("page is:{}", url.getParams().get(getPageKey()));
 
     updateConfig(url);
 
@@ -132,7 +122,7 @@ public class Medlive extends BaseWebCrawler {
     Boolean bool = Boolean.FALSE;
     for (Data data : response.getDatas()) {
       // 当前文章日期 > 设置时间
-       bool = DateUtils.compare(String.valueOf(data.get("publish_date")),
+      bool = DateUtils.compare(String.valueOf(data.get("publish_date")),
           String.valueOf(crawlerConfig.get("publish_date")), "yyyy-MM-dd");
       if (!bool) {
         break;
@@ -141,7 +131,7 @@ public class Medlive extends BaseWebCrawler {
 
     // 如果当前文章列表中的所有文章都日期都大于预设日期，那么将进行翻页操作
     if (bool) {
-      putURL(getURL(getParmas(((int)url.getParams().get(getPageKey())) + 1)));
+      putURL(getURL(getParmas(((int) url.getParams().get(getPageKey())) + 1)));
     }
 
     try {
@@ -155,9 +145,10 @@ public class Medlive extends BaseWebCrawler {
 
   /**
    * 这里交互会很频繁，是否需要每次都往数据库中提交呢
+   *
    * @param url {@link URL}
    */
-  void updateConfig(URL url) {
+  protected void updateConfig(URL url) {
     crawlerConfig.put(getPageKey(), url.getParams().get(getPageKey()));
     crawlerConfig.setUrl(url);
     getConfigService().updateConfig(crawlerConfig);
@@ -165,7 +156,7 @@ public class Medlive extends BaseWebCrawler {
 
   @Override
   protected Boolean parser(Response r) {
-    if(!r.getDatas().isEmpty()){
+    if (!r.getDatas().isEmpty()) {
       return Boolean.TRUE;
     }
     try {
@@ -185,18 +176,16 @@ public class Medlive extends BaseWebCrawler {
       }
       return Boolean.TRUE;
     } catch (Exception e) {
-      log.error("{}",e);
+      log.error("{}", e);
     }
     return Boolean.FALSE;
   }
 
   /**
-   * 1. 判断关键内容是否包含{@link Medlive#KEYS} 中的关键字
-   * 2. 不含跳过被检测的数据
-   * 3. 包含，新增到通知历史中；并保留到通知列表中(notices.add())，并且记录包含的关键字。
-   * 4. 将通知数据按照一定格式写入到Excel文件中
-   * 5. 发送邮件通知
-   * @param responses  当前爬虫有效结果
+   * 1. 判断关键内容是否包含{@link Medlive#KEYS} 中的关键字 2. 不含跳过被检测的数据 3. 包含，新增到通知历史中；并保留到通知列表中(notices.add())，并且记录包含的关键字。
+   * 4. 将通知数据按照一定格式写入到Excel文件中 5. 发送邮件通知
+   *
+   * @param responses 当前爬虫有效结果
    */
   @Override
   protected void notice(List<Response> responses) throws IOException {
@@ -229,9 +218,9 @@ public class Medlive extends BaseWebCrawler {
   @Override
   protected Map<String, Object> getCrawlerConfig() {
     /*
-    * 为了配合本次应该抓取到哪里为止；
-    * 规约已文章日期为准，抓取当前时间之后的文章，并会将最大的文章时间更新进来。
-    * */
+     * 为了配合本次应该抓取到哪里为止；
+     * 规约已文章日期为准，抓取当前时间之后的文章，并会将最大的文章时间更新进来。
+     * */
     Map<String, Object> map = new HashMap<>();
     map.put("publish_date", "2005-01-01");
     map.put("start_date", "2005-01-01");
@@ -248,11 +237,12 @@ public class Medlive extends BaseWebCrawler {
 
   @Override
   protected boolean isClean() {
-    return ((Integer)crawlerConfig.get(getPageKey())) == -1;
+    return ((Integer) crawlerConfig.get(getPageKey())) == -1;
   }
 
   /**
    * 在获取通知的数据是，需要将已经过滤过的数据排除掉。这个操作需要再考虑，TODO
+   *
    * @param responses {@link Response}
    * @return {@link Data}s
    */
@@ -263,7 +253,10 @@ public class Medlive extends BaseWebCrawler {
         if (!StringUtils.isEmpty(d.get("title"))) {
           String title = String.valueOf(d.get("title"));
           for (String k : KEYS) {
-            if (Pattern.matches(k.replaceAll("\\*", ".*"), title)) {
+            Boolean bool = DateUtils.compare(String.valueOf(d.get("publish_date")),
+                String.valueOf(crawlerConfig.get("publish_date")), "yyyy-MM-dd")
+                && Pattern.matches(k.replaceAll("\\*", ".*"), title);
+            if (bool) {
               d.setKey(k);
               notices.add(d);
               break;
@@ -281,6 +274,7 @@ public class Medlive extends BaseWebCrawler {
 
   /**
    * 返回翻页所用到的关键字
+   *
    * @return "page"
    */
   protected String getPageKey() {

@@ -1,8 +1,11 @@
-package com.qiushengming.business;
+package com.qiushengming.business.cfda;
 
 import static com.qiushengming.common.Symbol.BLANK;
 
+import com.qiushengming.business.Medlive;
 import com.qiushengming.common.Symbol;
+import com.qiushengming.common.download.Download;
+import com.qiushengming.common.download.SeleniumDownload;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
@@ -13,23 +16,28 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-/**
- * 国家药品不良反应监测中心 - http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb/ 1.数据监测地址 * 1. 数据监测地址 *
- * http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb/index%s.html 2. CDAADRypblfyxxtb 含义 - 药品不良反应信息通报
- */
-@Service("CDAADRypblfyxxtb")
-public class CDAADRypblfyxxtb extends Medlive {
+@Service("Announcement")
+public class Announcement extends Medlive {
 
-  private static final String URL_DOMAIN = "http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb";
+  private static final String URL_DOMAIN = "http://samr.cfda.gov.cn/WS01/CL0007";
   private static final String URL_TEMPLATE = URL_DOMAIN + "/index%s.html";
 
   @Override
   protected String getSiteName() {
-    return "国家药品不良反应监测中心";
+    return "国家食品药品监督管理总局-公告通知";
+  }
+
+  @Override
+  protected Download getDownload() {
+    if (download == null) {
+      download = new SeleniumDownload(Boolean.FALSE);
+    }
+    return download;
   }
 
   /**
@@ -37,7 +45,7 @@ public class CDAADRypblfyxxtb extends Medlive {
    */
   @Async
   @Override
-  @Scheduled(cron = "0 0 0 ? * 6")
+  @Scheduled(cron = "0 1/1 * * * ?")
   public void start() {
     super.start();
   }
@@ -53,6 +61,14 @@ public class CDAADRypblfyxxtb extends Medlive {
     url.setUrl(String.format(URL_TEMPLATE, page));
     // 组建参数
     url.setParams(params);
+
+    Map<String, String> headers = new HashMap<>();
+    headers.put("Accept",
+        "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8");
+    headers.put("Cookie",
+        "td_cookie=4208803451; FSSBBIl1UgzbN7N80S=toTE.T0ywDe03wCazGVINPa_9TQl9Pbvi4Vsb26NMhTSXMYPd4uTs9sX2lG6pq.D; FSSBBIl1UgzbN7N80T=22Wp5EDKAQM5wVrbe2A3Nt2KM.QI874D5wzMJZJ9kjpcxvakLZ5FUNw2_cPXNGbr._385EtLW_JZqbj9w85HLn9xC25gBAm1vu_T7JYzw6ELwIsr6dEWfVti2M3g90tzVxzh93cBbM4guuFTFe3kRq0WloRiUOgbNuhbPkI1aSu2AtBLjDoebseAvPfiAKA73bZ5KWFb_yITDWs_PlSXuA_4W8xfEsbPqarXrRdwpj7LPApl8lWXpkRpHJJj4xVBxZrIi29kEqgqfS56YUQXQOVCM12O.PHxWy2gIhCbuP3C__ULMGL4Iv9JB628Wm_pHSxFEtSW76.skMvb3vP0ug8dQycNV_gE0haJjS6NDxEieZskmicRutmVFjdCPPYbqTzc1At_VbDXh5KyEecZ.231d");
+    url.setHeaders(headers);
+
     return url;
   }
 
@@ -89,7 +105,7 @@ public class CDAADRypblfyxxtb extends Medlive {
     }
 
     try {
-      Thread.sleep(1000);
+      Thread.sleep(1500);
     } catch (InterruptedException e) {
       log.error("{}", e);
     }
@@ -103,37 +119,22 @@ public class CDAADRypblfyxxtb extends Medlive {
     }
     try {
       Document doc = Jsoup.parse(r.getHtml());
-      Element el = doc.selectFirst("ul.list");
-      if (el == null) {
-        return Boolean.FALSE;
-      }
+      Elements trs = doc.selectFirst("td.2016_erji_content").select("tr");
+      for (Element e : trs) {
+        if (e.attributes().size() > 0 && StringUtils.equals(e.attr("class"), "")) {
+          String date = e.select("span.listtddate15").text().replaceAll("[^0-9^\\-]", BLANK);
+          String url = URL_DOMAIN + e.selectFirst("a").attr("href").replace("..", BLANK);
+          String title = e.selectFirst("font").text();
 
-      Map<String, Object> map = new HashMap<>();
-      for (Element e : el.getAllElements()) {
-        switch (e.tagName()) {
-          case "li":
-            Element a = e.selectFirst("a[href]");
-            map.put("title", a.text());
+          Map<String, Object> map = new HashMap<>();
+          map.put("title", title);
+          map.put("guide_url", url);
+          map.put("publish_date", date);
 
-            String url = a.attr("href");
-            if (StringUtils.isEmpty(url)) {
-              url = "";
-            }
-            map.put("guide_url", URL_DOMAIN + url.replaceAll("\\.", BLANK));
-            break;
-          case "span":
-            Element span = e.selectFirst("span");
-            map.put("publish_date", span.text().replaceAll("[\\[\\]]", BLANK));
-            break;
-          case "br":
-            Data data = new Data();
-            data.setData(map);
-            data.setResponseId(r.getId());
-            r.addData(data);
-            map = new HashMap<>();
-            break;
-          default:
-            break;
+          Data data = new Data();
+          data.setResponseId(r.getId());
+          data.setData(map);
+          r.addData(data);
         }
       }
       return Boolean.TRUE;

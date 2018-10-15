@@ -1,11 +1,17 @@
 package com.qiushengming.business;
 
+import static com.qiushengming.common.Symbol.BLANK;
+
 import com.qiushengming.common.download.Download;
 import com.qiushengming.common.download.HttpClinentDownload;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
 import com.qiushengming.utils.DateUtils;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,13 +19,6 @@ import org.jsoup.nodes.Element;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.qiushengming.common.Symbol.BLANK;
 
 /**
  * 药品安全合作联盟 - http://www.psmchina.cn/index <br> 1. 国内最新医药政策 - http://www.psmchina.cn/safe_medicines_trends/medical_policies/
