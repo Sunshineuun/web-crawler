@@ -25,7 +25,7 @@ import org.springframework.stereotype.Service;
 public class CDAADRypblfyxxtb extends Medlive {
 
   private static final String URL_DOMAIN = "http://www.cdr-adr.org.cn/xxtb_255/ypblfyxxtb";
-  private static final String URL_TEMPLATE = URL_DOMAIN + "/index%s.html";
+  protected static final String URL_TEMPLATE = URL_DOMAIN + "/index%s.html";
 
   @Override
   protected String getSiteName() {
