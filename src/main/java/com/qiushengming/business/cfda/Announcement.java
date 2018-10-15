@@ -144,7 +144,25 @@ public class Announcement extends Medlive {
     return Boolean.FALSE;
   }
 
+  @Override
   protected String[] getKeys() {
-    return new String[]{"*药品不良反应*", "*不良反应*", "*药品*风险*", "*药品*毒性*", "*使用*风险*",};
+    return new String[]{"*药品不良反应*", "*不良反应*", "*药品*风险*",
+        "*药品*毒性*", "*使用*风险*", "*儿童*禁用*", "*儿童*风险*",
+        "*注射剂*临床*管理*", "*修订*说明书*", "*通过*仿制药*一致性*公告*",
+    "*处方药*目录*", "*关于*处方药*通知*"};
+  }
+
+  @Override
+  protected Map<String, Object> getCrawlerConfig() {
+    /*
+     * 为了配合本次应该抓取到哪里为止；
+     * 规约已文章日期为准，抓取当前时间之后的文章，并会将最大的文章时间更新进来。
+     * */
+    Map<String, Object> map = new HashMap<>();
+    map.put("publish_date", "1990-01-01");
+    map.put("start_date", "1990-01-01");
+    // 当page
+    map.put(getPageKey(), -1);
+    return map;
   }
 }

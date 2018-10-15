@@ -28,9 +28,8 @@ import org.springframework.stereotype.Service;
  * 高危药品 - /gwyp/ <br> 4.3 用药安全文化建设 - /yyaqwhjs/ <br> 4.4 静脉用药安全 - /jmyyaq/ <br> 4.5 时讯速递 - /sxsd/
  * <br> 4.6 举案论错 - /jalc/ <br> 4.7 用药安全课堂 - /yyaqkt/ <br> 4.8 药师与患者 - /ysyhz/ <br>
  *
- * 问题
- *  1. 关于HTTP 406问题排查
- *    参考地址 - http://mobile.51cto.com/hot-558405.htm
+ * 问题 1. 关于HTTP 406问题排查 参考地址 - http://mobile.51cto.com/hot-558405.htm
+ *
  * @author MinMin
  */
 @Service("Psmchina")
@@ -78,6 +77,8 @@ public class Psmchina extends Medlive {
         "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/jalc",
         "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/yyaqkt",
         "http://www.psmchina.cn/safe_medicines_trends/yyaqsx/ysyhz",
+        // 儿童用药安全
+        "http://www.psmchina.cn/safe_medicines_information/safe_medicines_knowledge/etaqyy/",
     };
     List<URL> urls = new ArrayList<>();
 
@@ -101,7 +102,7 @@ public class Psmchina extends Medlive {
   @Override
   protected Response download(URL url) {
     int page = (int) url.getParams().get(getPageKey());
-    log.info("page is:{}, URL is:{}",  page, url.getUrl());
+    log.info("page is:{}, URL is:{}", page, url.getUrl());
 
     updateConfig(url);
 
@@ -129,7 +130,7 @@ public class Psmchina extends Medlive {
 
     // 如果当前文章列表中的所有文章都日期都大于预设日期，那么将进行翻页操作
     if (bool) {
-      putURL(getURL(url.getUrl(), getParmas(((Integer)url.getParams().get(getPageKey())) + 1)));
+      putURL(getURL(url.getUrl(), getParmas(((Integer) url.getParams().get(getPageKey())) + 1)));
     }
 
     try {
@@ -148,9 +149,9 @@ public class Psmchina extends Medlive {
     }
     try {
       Map resultMap = GSON.fromJson(r.getHtml(), Map.class);
-      String html = (String)resultMap.get("data");
+      String html = (String) resultMap.get("data");
       Document doc = Jsoup.parse(html);
-      if (StringUtils.equals("success", (String)resultMap.get("msg"))) {
+      if (StringUtils.equals("success", (String) resultMap.get("msg"))) {
         for (Element e : doc.select("dl")) {
           Element a = e.selectFirst("h4 > a");
           String title = a.attr("title");
@@ -209,7 +210,8 @@ public class Psmchina extends Medlive {
 
   @Override
   protected String[] getKeys() {
-    return new String[]{"*药品不良反应*", "*不良反应*", "*药品*风险*", "*药品*毒性*", "*使用*风险*",};
+    return new String[]{"*药品不良反应*", "*不良反应*", "*药品*风险*",
+        "*药品*毒性*", "*使用*风险*", "*儿童*禁用*", "*儿童*风险*"};
   }
 
   @Override

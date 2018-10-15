@@ -158,4 +158,9 @@ public class Sinopharmac extends Medlive {
     wb.write(new FileOutputStream(file));
     getEmailTool().sendSimpleMail(getSiteName(), file);
   }
+
+  @Override
+  protected String[] getKeys() {
+    return new String[]{"*超说明书*", "*超药物说明书*", "*超药品说明书*", "*药物*专家共识*"};
+  }
 }

@@ -143,6 +143,7 @@ public class CDAADRypblfyxxtb extends Medlive {
     return Boolean.FALSE;
   }
 
+  @Override
   protected String[] getKeys() {
     return new String[]{"*药品不良反应*", "*不良反应*", "*药品*风险*", "*药品*毒性*", "*使用*风险*",};
   }
