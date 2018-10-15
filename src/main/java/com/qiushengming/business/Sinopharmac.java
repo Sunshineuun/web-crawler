@@ -77,8 +77,8 @@ public class Sinopharmac extends Medlive {
     Boolean bool = Boolean.FALSE;
     for (Data data : response.getDatas()) {
       // 当前文章日期 > 设置时间
-      bool = DateUtils.compare(String.valueOf(data.get("list-time")),
-          String.valueOf(crawlerConfig.get("list-time")), "yyyy-MM-dd");
+      bool = DateUtils.compare(String.valueOf(data.get("publish_date")),
+          String.valueOf(crawlerConfig.get("publish_date")), "yyyy-MM-dd");
       if (!bool) {
         break;
       }
@@ -115,7 +115,7 @@ public class Sinopharmac extends Medlive {
         String keyword = li.selectFirst("span.list-keyword").text();
 
         Map<String, Object> map = new HashMap<>();
-        map.put("list-time", time);
+        map.put("publish_date", time);
         map.put("list-keyword", keyword);
         map.put("html_url", URL_DOMAIL + a.get(0).attr("href"));
         map.put("title", a.get(0).text());
@@ -157,19 +157,5 @@ public class Sinopharmac extends Medlive {
         .nowDate()));
     wb.write(new FileOutputStream(file));
     getEmailTool().sendSimpleMail(getSiteName(), file);
-  }
-
-  @Override
-  protected Map<String, Object> getCrawlerConfig() {
-    /*
-     * 为了配合本次应该抓取到哪里为止；
-     * 规约已文章日期为准，抓取当前时间之后的文章，并会将最大的文章时间更新进来。
-     * */
-    Map<String, Object> map = new HashMap<>();
-    map.put("list-time", "2005-01-01");
-    map.put("start_date", "2005-01-01");
-    // 当page
-    map.put(getPageKey(), -1);
-    return map;
   }
 }
