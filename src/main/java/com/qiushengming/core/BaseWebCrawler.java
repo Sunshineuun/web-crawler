@@ -196,7 +196,7 @@ public abstract class BaseWebCrawler {
    * 退出操作
    */
   private void quit() {
-    getDownload().quit();
+    //getDownload().quit();
   }
 
   /**
