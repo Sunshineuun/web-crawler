@@ -6,19 +6,21 @@ import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
 import com.qiushengming.utils.DataToExecl;
 import com.qiushengming.utils.DateUtils;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
 
 /**
  * 辅助与重点监控用药 - https://db.yaozh.com/monitored?p=4&pageSize=30
@@ -43,7 +45,7 @@ public class Monitored extends BaseWebCrawler{
   }
 
   @Override
-  @Scheduled(cron = "0 0/1 * * * ? ")
+  /*@Scheduled(cron = "0 0/1 * * * ? ")*/
   public void start() {
     super.start();
   }
