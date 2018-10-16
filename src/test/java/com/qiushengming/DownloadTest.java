@@ -1,16 +1,14 @@
 package com.qiushengming;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class DownloadTest {
   public static void main(String[] args) {
-    long i = 1538105175000L;
-    Date d = new Date(i);
-    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-    String s = format.format(d);
-    System.out.println(s);
+    Map m = new HashMap();
+    Map m1 = new HashMap();
+    m.putAll(null);
   }
 
   public static void a(List<String> a) {
