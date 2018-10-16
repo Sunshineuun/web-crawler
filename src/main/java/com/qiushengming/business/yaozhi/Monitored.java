@@ -62,6 +62,9 @@ public class Monitored extends BaseWebCrawler{
       int page = Integer.valueOf(k1[1]);
 
       for (int i = 1; i <= page / 30 + 1; i++) {
+        if(i > 7){
+          break;
+        }
         URL url = new URL();
         url.setUrl(String.format(URL_TEMPLATE, i, k1[0]));
         urls.add(url);
@@ -104,9 +107,8 @@ public class Monitored extends BaseWebCrawler{
         Elements trs = tbody.select("tr");
         for (Element tr : trs) {
           Map<String, Object> map = new HashMap<>();
-          Elements tds = tr.getAllElements();
           for (int i = 0; i < TITLE_KEY.length; i++) {
-            Element e = tds.get(i);
+            Element e = tr.child(i);
             map.put(TITLE_KEY[i], e.text());
 
             if (i == 0) {
@@ -118,6 +120,7 @@ public class Monitored extends BaseWebCrawler{
           Data data = new Data();
           data.setData(map);
           data.setResponseId(r.getId());
+          r.addData(data);
         }
       }
       return Boolean.TRUE;
@@ -190,7 +193,7 @@ public class Monitored extends BaseWebCrawler{
       {"2017-12-0","76"},
       {"2017-12-1","80"},
       {"2017-12-2","346"},
-      {"2018-01-2","3734"},
+      {"2018-01-22","3734"},
       {"2018-02","140"},
       {"2018-03-0","94"},
       {"2018-03-1","50"},
