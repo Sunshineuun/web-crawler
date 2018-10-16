@@ -20,7 +20,7 @@ public interface ManagementService<T extends BaseEntity> {
    */
   void deleteByType(String type);
 
-  List<T> findAllIsEnable();
+  List<T> findAllIsEnable(String type);
 
   /**
    * 将{@link BaseEntity#isEnable} 更新为 9；
