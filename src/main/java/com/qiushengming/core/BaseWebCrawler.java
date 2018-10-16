@@ -253,7 +253,7 @@ public abstract class BaseWebCrawler {
    * 1. 这个有个问题，就是findAll的话，会将所有数据取出来，占据内存比较大。 <br>
    */
   private List<Response> _parsers() {
-    List<Response> list = responseResultService.findAllIsEnable();
+    List<Response> list = responseResultService.findAllIsEnable(crawlerUuid());
     int index = 0;
     for (Response r : list) {
       index++;
