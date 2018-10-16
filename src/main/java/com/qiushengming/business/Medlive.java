@@ -23,7 +23,8 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 /**
- * 医脉通监测 - http://guide.medlive.cn/ 1. 数据请求的地址 * http://guide.medlive.cn/ajax/load_more.ajax.php?branch=0&sort=publish&year=0&type=all&page=6
+ * 医脉通指南浏览监测 - http://guide.medlive.cn/ 1. 数据请求的地址 * http://guide.medlive.cn/ajax/load_more.ajax
+ * .php?branch=0&sort=publish&year=0&type=all&page=6
  * * branch=0 ? * sort=publish 排序 * year=0 * type=all * page=6 2. 数据请求是通过表单提交的方式进行查询的 *
  * 可以观察Headers中，Query String Parameters 和 Form Data 在后台获取是不一样的。 3. 下载的内容进行解析 *
  * 解析存储的速度有点慢，并且数据更新错了，之前指定的Class错了
