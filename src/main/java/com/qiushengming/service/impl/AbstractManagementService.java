@@ -40,8 +40,8 @@ public class AbstractManagementService<T extends BaseEntity>
   }
 
   @Override
-  public List<T> findAllIsEnable() {
-    Query query = Query.query(Criteria.where("isEnable").is(1));
+  public List<T> findAllIsEnable(String type) {
+    Query query = Query.query(Criteria.where("isEnable").is(1).and("type").is(type));
     return getMongoOperations().find(query, getEntityClass());
   }
 
