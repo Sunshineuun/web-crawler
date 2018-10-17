@@ -146,16 +146,18 @@ public class Monitored extends BaseWebCrawler{
       }
     }
 
-    //数据 to Excel
-    SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
-    Sheet sheet = DataToExecl.createSheet(wb);
-    DataToExecl.writeData(Arrays.asList(TITLE_KEY), datas, sheet);
+    if (!datas.isEmpty()) {
+      //数据 to Excel
+      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
+      Sheet sheet = DataToExecl.createSheet(wb);
+      DataToExecl.writeData(Arrays.asList(TITLE_KEY), datas, sheet);
 
-    File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
-        .nowDate()));
-    wb.write(new FileOutputStream(file));
+      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
+          .nowDate()));
+      wb.write(new FileOutputStream(file));
 
-    log.info("文件存储路径：{}", file.getAbsolutePath());
+      log.info("文件存储路径：{}", file.getAbsolutePath());
+    }
   }
 
   @Override
