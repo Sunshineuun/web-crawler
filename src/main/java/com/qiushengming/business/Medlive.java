@@ -132,11 +132,11 @@ public class Medlive extends BaseWebCrawler {
 
     // 如果当前文章列表中的所有文章都日期都大于预设日期，那么将进行翻页操作
     if (bool) {
-      putURL(getURL(getParmas(((int) url.getParams().get(getPageKey())) + 1)));
+      putURL(getURL(getParmas(((Integer) url.getParams().get(getPageKey())) + 1)));
     }
 
     try {
-      Thread.sleep(1000);
+      Thread.sleep(1500);
     } catch (InterruptedException e) {
       log.error("{}", e);
     }
