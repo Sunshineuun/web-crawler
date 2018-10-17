@@ -148,15 +148,17 @@ public class Sinopharmac extends Medlive {
       datas.add(map);
     }
 
-    //数据 to Excel
-    SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
-    Sheet sheet = DataToExecl.createSheet(wb);
-    DataToExecl.writeData(Arrays.asList(titles), datas, sheet);
+    if(!datas.isEmpty()) {
+      //数据 to Excel
+      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
+      Sheet sheet = DataToExecl.createSheet(wb);
+      DataToExecl.writeData(Arrays.asList(titles), datas, sheet);
 
-    File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
-        .nowDate()));
-    wb.write(new FileOutputStream(file));
-    getEmailTool().sendSimpleMail(getSiteName(), file);
+      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
+          .nowDate()));
+      wb.write(new FileOutputStream(file));
+      getEmailTool().sendSimpleMail(getSiteName(), file);
+    }
   }
 
   @Override
