@@ -1,7 +1,14 @@
 package com.qiushengming.common.download;
 
+import static org.apache.http.HttpStatus.SC_OK;
+
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
@@ -25,14 +32,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.http.HttpStatus.SC_OK;
 
 public class HttpClinentDownload implements Download {
 
@@ -259,6 +258,6 @@ public class HttpClinentDownload implements Download {
    * @return int
    */
   private int getTimeout() {
-    return 1000;
+    return 5000;
   }
 }
