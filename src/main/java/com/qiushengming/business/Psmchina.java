@@ -149,6 +149,9 @@ public class Psmchina extends Medlive {
     }
     try {
       Map resultMap = GSON.fromJson(r.getHtml(), Map.class);
+      if (!resultMap.containsKey("data")) {
+        return Boolean.FALSE;
+      }
       String html = (String) resultMap.get("data");
       Document doc = Jsoup.parse(html);
       if (StringUtils.equals("success", (String) resultMap.get("msg"))) {
