@@ -14,7 +14,7 @@ public interface Download {
    * GET 请求
    * 获取资源
    * @param url {@link URL}
-   * @return 一般返回HTML
+   * @return {@link Response}
    */
   Response get(URL url);
 
