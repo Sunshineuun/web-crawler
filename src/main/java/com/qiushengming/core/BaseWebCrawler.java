@@ -9,16 +9,16 @@ import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
 import com.qiushengming.service.CrawlerConfigService;
 import com.qiushengming.service.ResponseResultService;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import javax.annotation.Resource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
-
-import javax.annotation.Resource;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 public abstract class BaseWebCrawler {
 
@@ -317,4 +317,14 @@ public abstract class BaseWebCrawler {
   protected abstract void notice(List<Response> responses) throws IOException;
 
   protected abstract Map<String, Object> getCrawlerConfig();
+
+  protected static String getAbsUrl(String absolutePath, String relativePath) {
+    try {
+      java.net.URL absoluteUrl = new java.net.URL(absolutePath);
+      java.net.URL parseUrl = new java.net.URL(absoluteUrl, relativePath);
+      return parseUrl.toString();
+    } catch (MalformedURLException e) {
+      return "";
+    }
+  }
 }
