@@ -56,7 +56,7 @@ public class Medicine extends Interaction {
     Integer start = (Integer) crawlerConfig.get("start");
     Integer end = (Integer) crawlerConfig.get("end");
 
-    for (Integer i = start; i <= end; i++) {
+    for (Integer i = start; i <= 50; i++) {
       URL url = new URL();
       url.setUrl(String.format(URL_TEMPLATE, i.toString()));
       urls.add(url);
@@ -90,19 +90,17 @@ public class Medicine extends Interaction {
         return Boolean.FALSE;
       }
 
-      for (Element a : tbody.select("a[title=$name]")) {
-        URL url = new URL();
-        url.setUrl(URL_DOMAIN + a.attr("href"));
-        url.setTree(r.getUrl().getTree() + 1);
-        getUrlPool().put(url);
-      }
-
       for (Element tr : tbody.select("tr")) {
         Element td = tr.selectFirst("td.lineheight18");
         if (td == null) {
           continue;
         }
         String url = URL_DOMAIN + td.child(0).attr("href");
+        URL urlObj = new URL();
+        urlObj.setUrl(url);
+        urlObj.setTree(r.getUrl().getTree() + 1);
+        putURL(urlObj);
+
         String drugname = td.child(0).child(0).text();
 
         Map<String, Object> map = new HashMap<>();
@@ -129,14 +127,15 @@ public class Medicine extends Interaction {
       Document doc = Jsoup.parse(r.getHtml());
       Element div = doc.selectFirst("div.userwidth2");
       Map<String, Object> map = new HashMap<>();
-
-      String s = div.childNode(7).outerHtml();
-      if(StringUtils.startsWith(s,s1)){
-        map.put("是否处方", StringUtils.replaceAll(s, s1, BLANK));
+      for (int i = 0; i < div.childNodeSize(); i++) {
+        String s = div.childNode(i).outerHtml();
+        if(StringUtils.startsWith(s,s1)){
+          map.put("是否处方", StringUtils.replaceAll(s, s1, BLANK));
+        }
+        if (StringUtils.startsWith(s,s2)) {
+          map.put("通用名", StringUtils.replaceAll(s, s2, BLANK));
+        }
       }
-
-      String drugname = div.childNode(7).outerHtml();
-      map.put("通用名", StringUtils.replaceAll(drugname, s2, BLANK));
 
       map.put("TREE", r.getUrl().getTree());
       map.put("URL", r.getUrl().getUrl());
@@ -145,6 +144,7 @@ public class Medicine extends Interaction {
       data.setResponseId(r.getId());
       data.setData(map);
       r.addData(data);
+      return Boolean.TRUE;
     } catch (Exception e) {
       log.error("{}", e);
     }
@@ -178,6 +178,17 @@ public class Medicine extends Interaction {
       wb.write(new FileOutputStream(file));
       getEmailTool().sendSimpleMail(getSiteName(), file);
     }
+  }
+
+  @Override
+  protected List<Data> getNoticeData(List<Response> responses) {
+    List<Data> notices = new ArrayList<>();
+    for (Response r : responses) {
+      if (r.getUrl().getTree() == 1) {
+        notices.addAll(r.getDatas());
+      }
+    }
+    return notices;
   }
 
   @Override
