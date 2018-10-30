@@ -156,13 +156,13 @@ public class Medicine extends Interaction {
     List<Data> notices = getNoticeData(responses);
 
     //数据转换
-    String[] titles = {"名称", "通用名", "是否处方药", "ID"};
+    String[] titles = {"名称", "通用名", "是否处方", "ID"};
     List<Map<String, Object>> datas = new ArrayList<>();
     for (Data d : notices) {
       Map<String, Object> map = new HashMap<>();
       map.put("名称", getSiteName());
       map.put("通用名", d.get("通用名"));
-      map.put("是否处方药", d.get("是否处方药"));
+      map.put("是否处方", d.get("是否处方"));
       map.put("ID", d.getId());
       datas.add(map);
     }
