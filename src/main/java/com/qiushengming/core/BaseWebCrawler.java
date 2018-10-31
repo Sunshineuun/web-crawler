@@ -26,7 +26,7 @@ public abstract class BaseWebCrawler {
 
   protected Logger log = LoggerFactory.getLogger(getClass());
 
-  protected Download download = initDownload();
+  protected Download download;
 
   protected CrawlerConfig crawlerConfig;
 
@@ -45,6 +45,9 @@ public abstract class BaseWebCrawler {
   private EmailTool emailTool;
 
   protected Download getDownload() {
+    if (download == null) {
+      download = initDownload();
+    }
     return download;
   }
 
@@ -89,13 +92,13 @@ public abstract class BaseWebCrawler {
         return;
       }
 
-      /*getUrlPool().getUrlPoolService().deleteByType(crawlerUuid());
-      getResponseResultService().deleteByType(crawlerUuid());
-      getConfigService().deleteByType(crawlerUuid());*/
-
       log.debug("进行数据采集 ------");
 
       isLock = Boolean.TRUE;
+
+      getUrlPool().getUrlPoolService().deleteByType(crawlerUuid());
+      getResponseResultService().deleteByType(crawlerUuid());
+      getConfigService().deleteByType(crawlerUuid());
 
       // 0. init
       initConfig();
