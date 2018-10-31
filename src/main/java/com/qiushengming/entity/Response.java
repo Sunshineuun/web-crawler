@@ -29,7 +29,7 @@ public class Response
   @Field("DATA")
   private List<Data> datas = new ArrayList<>();
   @Transient
-  private HttpResponse httpResponse;
+  private transient HttpResponse httpResponse;
 
   public Response(URL url) {
     this.url = url;
