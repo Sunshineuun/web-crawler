@@ -3,18 +3,11 @@ package com.qiushengming.business;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
-import com.qiushengming.utils.DataToExecl;
 import com.qiushengming.utils.DateUtils;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -134,9 +127,8 @@ public class Sinopharmac extends Medlive {
   }
 
   @Override
-  protected void notice(List<Response> responses) throws IOException {
+  protected List<Map<String, Object>> notice(List<Response> responses) {
     List<Data> notices = getNoticeData(responses);
-    String[] titles = {"名称", "标题", "URL", "KEY", "ID"};
     List<Map<String, Object>> datas = new ArrayList<>();
     for (Data d : notices) {
       Map<String, Object> map = new HashMap<>();
@@ -147,18 +139,7 @@ public class Sinopharmac extends Medlive {
       map.put("ID", d.getId());
       datas.add(map);
     }
-
-    if(!datas.isEmpty()) {
-      //数据 to Excel
-      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
-      Sheet sheet = DataToExecl.createSheet(wb);
-      DataToExecl.writeData(Arrays.asList(titles), datas, sheet);
-
-      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
-          .nowDate()));
-      wb.write(new FileOutputStream(file));
-      getEmailTool().sendSimpleMail(getSiteName(), file);
-    }
+    return datas;
   }
 
   @Override
