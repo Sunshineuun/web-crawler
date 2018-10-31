@@ -6,19 +6,11 @@ import com.qiushengming.business.yaozhi.Interaction;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
-import com.qiushengming.utils.DataToExecl;
-import com.qiushengming.utils.DateUtils;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -152,11 +144,10 @@ public class Medicine extends Interaction {
   }
 
   @Override
-  protected void notice(List<Response> responses) throws IOException {
+  protected List<Map<String, Object>> notice(List<Response> responses){
     List<Data> notices = getNoticeData(responses);
 
     //数据转换
-    String[] titles = {"名称", "通用名", "是否处方", "ID"};
     List<Map<String, Object>> datas = new ArrayList<>();
     for (Data d : notices) {
       Map<String, Object> map = new HashMap<>();
@@ -167,17 +158,7 @@ public class Medicine extends Interaction {
       datas.add(map);
     }
 
-    if (!datas.isEmpty()) {
-      //数据 to Excel
-      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
-      Sheet sheet = DataToExecl.createSheet(wb);
-      DataToExecl.writeData(Arrays.asList(titles), datas, sheet);
-
-      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
-          .nowDate()));
-      wb.write(new FileOutputStream(file));
-      getEmailTool().sendSimpleMail(getSiteName(), file);
-    }
+    return datas;
   }
 
   @Override
@@ -197,5 +178,10 @@ public class Medicine extends Interaction {
     map.put("start", 1);
     map.put("end", 5927);
     return map;
+  }
+
+  @Override
+  protected String[] getTitles() {
+    return new String[]{"名称", "通用名", "是否处方", "ID"};
   }
 }
