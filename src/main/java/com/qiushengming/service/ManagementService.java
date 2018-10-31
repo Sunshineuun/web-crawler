@@ -33,4 +33,6 @@ public interface ManagementService<T extends BaseEntity> {
    * @return Boolean
    */
   Boolean isExist(T o);
+
+  void deleteById(String s);
 }
