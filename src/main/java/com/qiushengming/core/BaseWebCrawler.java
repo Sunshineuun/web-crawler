@@ -9,12 +9,19 @@ import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
 import com.qiushengming.service.CrawlerConfigService;
 import com.qiushengming.service.ResponseResultService;
+import com.qiushengming.utils.DataToExecl;
+import com.qiushengming.utils.DateUtils;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Resource;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -114,7 +121,7 @@ public abstract class BaseWebCrawler {
       // 4. 通知
       log.info("XSSF");
 
-      notice(responses);
+      _notice(responses);
 
       // 5. 更新配置信息
       configService.updateConfig(crawlerConfig);
@@ -127,6 +134,28 @@ public abstract class BaseWebCrawler {
     }
 
     isLock = Boolean.FALSE;
+  }
+
+  private void _notice(List<Response> responses) {
+    List<Map<String, Object>> datas = notice(responses);
+
+    // TODO 在这里拦截过滤已通知过的数据
+
+    if(!datas.isEmpty()){
+      //数据 to Excel
+      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
+      Sheet sheet = DataToExecl.createSheet(wb);
+      DataToExecl.writeData(Arrays.asList(getTitles()), datas, sheet);
+
+      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
+          .nowDate()));
+      try {
+        wb.write(new FileOutputStream(file));
+      } catch (IOException e) {
+        log.error("{}", e);
+      }
+      getEmailTool().sendSimpleMail(getSiteName(), file);
+    }
   }
 
   /**
@@ -318,9 +347,11 @@ public abstract class BaseWebCrawler {
    *
    * @param responses 爬虫的启动时间
    */
-  protected abstract void notice(List<Response> responses) throws IOException;
+  protected abstract List<Map<String, Object>> notice(List<Response> responses);
 
   protected abstract Map<String, Object> getCrawlerConfig();
+
+  protected abstract String[] getTitles();
 
   protected static String getAbsUrl(String absolutePath, String relativePath) {
     try {
