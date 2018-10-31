@@ -4,8 +4,10 @@ import com.qiushengming.common.Symbol;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
+import com.qiushengming.utils.DateUtils;
 import java.util.HashMap;
 import java.util.Map;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,6 +36,7 @@ public class Mohrss extends Medlive {
   @Async
   @Override
   @Scheduled(cron = "0 0 0 ? * 6")
+  /*@Scheduled(cron = "0 0/1 * * * ?")*/
   public void start() {
     super.start();
   }
@@ -60,18 +63,59 @@ public class Mohrss extends Medlive {
   }
 
   @Override
+  protected Response download(URL url) {
+    log.info("page is:{}", url.getParams().get(getPageKey()));
+
+    updateConfig(url);
+
+    Response response = getDownload().get(url);
+
+    // 接着判断获取文章的日期是否大于配置设置的日期
+    parser(response);
+    Boolean bool = Boolean.FALSE;
+    for (Data data : response.getDatas()) {
+      // 当前文章日期 > 设置时间
+      bool = DateUtils.compare(String.valueOf(data.get("publish_date")),
+          String.valueOf(crawlerConfig.get("publish_date")), "yyyy-MM-dd");
+      if (!bool) {
+        break;
+      }
+    }
+
+    // 如果当前文章列表中的所有文章都日期都大于预设日期，那么将进行翻页操作
+    if (bool) {
+      putURL(getURL(getParmas(((Integer) url.getParams().get(getPageKey())) + 1)));
+    }
+
+    try {
+      Thread.sleep(1500);
+    } catch (InterruptedException e) {
+      log.error("{}", e);
+    }
+
+    return response;
+  }
+
+  @Override
   protected Boolean parser(Response r) {
     if (!r.getDatas().isEmpty()) {
       return Boolean.TRUE;
     }
+
+    if (StringUtils.isEmpty(r.getHtml())) {
+      return Boolean.FALSE;
+    }
     try {
       Document doc = Jsoup.parse(r.getHtml());
-      Element el = doc.selectFirst("div.organGeneralNewListConType");
-      if (el == null) {
+      Elements els = doc.select("div.organGeneralNewListConType");
+      if (els == null) {
         return Boolean.FALSE;
       }
-
-      for (Element e : el.getAllElements()) {
+      /*
+      *   TODO
+      *   编码有问题
+      * */
+      for (Element e : els){
         Elements spans = e.select("span.organMenuTxtLink");
         String title = spans.get(0).text();
         String url = getAbsUrl(r.getUrl().getUrl(), spans.get(0).attr("href"));
