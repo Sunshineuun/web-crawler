@@ -63,6 +63,12 @@ public class AbstractManagementService<T extends BaseEntity>
     return  Boolean.TRUE;
   }
 
+  @Override
+  public void deleteById(String s) {
+    Query query = Query.query(Criteria.where("id").is(s));
+    getMongoOperations().remove(query, getEntityClass());
+  }
+
   Class<T> getEntityClass() {
     if (entityClass == null) {
       entityClass =
