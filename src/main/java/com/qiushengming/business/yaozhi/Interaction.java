@@ -4,18 +4,10 @@ import com.qiushengming.core.BaseWebCrawler;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
-import com.qiushengming.utils.DataToExecl;
-import com.qiushengming.utils.DateUtils;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -122,11 +114,10 @@ public class Interaction extends BaseWebCrawler {
   }
 
   @Override
-  protected void notice(List<Response> responses) throws IOException {
+  protected List<Map<String, Object>> notice(List<Response> responses) {
     List<Data> notices = getNoticeData(responses);
 
     //数据转换
-    String[] titles = {"名称", "药品", "相互作用药品", "相互作用效果", "ID"};
     List<Map<String, Object>> datas = new ArrayList<>();
     for (Data d : notices) {
       Map<String, Object> map = new HashMap<>();
@@ -137,18 +128,7 @@ public class Interaction extends BaseWebCrawler {
       map.put("ID", d.getId());
       datas.add(map);
     }
-
-    if (!datas.isEmpty()) {
-      //数据 to Excel
-      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
-      Sheet sheet = DataToExecl.createSheet(wb);
-      DataToExecl.writeData(Arrays.asList(titles), datas, sheet);
-
-      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
-          .nowDate()));
-      wb.write(new FileOutputStream(file));
-      getEmailTool().sendSimpleMail(getSiteName(), file);
-    }
+    return datas;
   }
 
   protected List<Data> getNoticeData(List<Response> responses) {
@@ -180,5 +160,10 @@ public class Interaction extends BaseWebCrawler {
   @Override
   protected boolean isClean() {
     return Boolean.FALSE;
+  }
+
+  @Override
+  protected String[] getTitles() {
+    return new String[]{"名称", "药品", "相互作用药品", "相互作用效果", "ID"};
   }
 }
