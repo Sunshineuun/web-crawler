@@ -30,7 +30,7 @@ public class Nhfpc extends Medlive{
    */
   @Async
   @Override
-  @Scheduled(cron = "0 0/1 * * * ?")
+  @Scheduled(cron = "0 0 0 1 * ? ")
   public void start() {
     super.start();
   }
