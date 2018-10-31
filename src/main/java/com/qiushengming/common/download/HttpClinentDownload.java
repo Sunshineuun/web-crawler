@@ -61,7 +61,7 @@ public class HttpClinentDownload implements Download {
 
       if (response.getStatusLine().getStatusCode() == SC_OK) {
         // 目前暂时先将解析编码设置为UTF-8,后续需要调整的。由对应的站点告知，编码是什么
-        responseResult.setHtml(EntityUtils.toString(response.getEntity(), "UTF-8"));
+        responseResult.setHtml(EntityUtils.toString(response.getEntity(), url.getCharset()));
         responseResult.setHttpResponse( response);
       } else {
         // URL - 响应状态码
