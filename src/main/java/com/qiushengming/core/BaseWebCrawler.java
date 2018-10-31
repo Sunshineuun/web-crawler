@@ -98,7 +98,7 @@ public abstract class BaseWebCrawler {
 
       getUrlPool().getUrlPoolService().deleteByType(crawlerUuid());
       getResponseResultService().deleteByType(crawlerUuid());
-      getConfigService().deleteByType(crawlerUuid());
+      getConfigService().deleteById(crawlerUuid());
 
       // 0. init
       initConfig();
@@ -199,6 +199,7 @@ public abstract class BaseWebCrawler {
    * 退出操作
    */
   private void quit() {
+    download = null;
     //getDownload().quit();
   }
 
