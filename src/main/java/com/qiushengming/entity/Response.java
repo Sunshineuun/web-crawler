@@ -1,6 +1,8 @@
 package com.qiushengming.entity;
 
 import com.qiushengming.common.Symbol;
+import org.apache.http.HttpResponse;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -26,6 +28,8 @@ public class Response
   private URL url;
   @Field("DATA")
   private List<Data> datas = new ArrayList<>();
+  @Transient
+  private HttpResponse httpResponse;
 
   public Response(URL url) {
     this.url = url;
@@ -61,5 +65,13 @@ public class Response
 
   public void addAllData(List<Data> ds) {
     getDatas().addAll(ds);
+  }
+
+  public HttpResponse getHttpResponse() {
+    return httpResponse;
+  }
+
+  public void setHttpResponse(HttpResponse httpResponse) {
+    this.httpResponse = httpResponse;
   }
 }
