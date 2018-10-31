@@ -7,20 +7,16 @@ import com.qiushengming.core.BaseWebCrawler;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
-import com.qiushengming.utils.DataToExecl;
 import com.qiushengming.utils.DateUtils;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Pattern;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
-
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.regex.Pattern;
 
 /**
  * 医脉通指南浏览监测 - http://guide.medlive.cn/ 1. 数据请求的地址 * http://guide.medlive.cn/ajax/load_more.ajax
@@ -189,11 +185,10 @@ public class Medlive extends BaseWebCrawler {
    * @param responses 当前爬虫有效结果
    */
   @Override
-  protected void notice(List<Response> responses) throws IOException {
+  protected List<Map<String, Object>> notice(List<Response> responses) {
     List<Data> notices = getNoticeData(responses);
 
     //数据转换
-    String[] titles = {"名称", "标题", "KEY", "URL", "ID"};
     List<Map<String, Object>> datas = new ArrayList<>();
     for (Data d : notices) {
       Map<String, Object> map = new HashMap<>();
@@ -204,18 +199,7 @@ public class Medlive extends BaseWebCrawler {
       map.put("ID", d.getId());
       datas.add(map);
     }
-
-    if(!datas.isEmpty()){
-      //数据 to Excel
-      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
-      Sheet sheet = DataToExecl.createSheet(wb);
-      DataToExecl.writeData(Arrays.asList(titles), datas, sheet);
-
-      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
-          .nowDate()));
-      wb.write(new FileOutputStream(file));
-      getEmailTool().sendSimpleMail(getSiteName(), file);
-    }
+    return datas;
   }
 
   @Override
@@ -284,5 +268,10 @@ public class Medlive extends BaseWebCrawler {
    */
   protected String getPageKey() {
     return "page";
+  }
+
+  @Override
+  protected String[] getTitles() {
+    return new String[]{"名称", "标题", "KEY", "URL", "ID"};
   }
 }
