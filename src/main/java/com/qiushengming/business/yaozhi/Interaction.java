@@ -43,6 +43,7 @@ public class Interaction extends BaseWebCrawler {
   @Async
   @Override
   @Scheduled(cron = "0 0 0 ? * 6")
+  /*@Scheduled(cron = "0 0/1 * * * ? ")*/
   public void start() {
     super.start();
   }
@@ -58,7 +59,7 @@ public class Interaction extends BaseWebCrawler {
     Integer start = (Integer) crawlerConfig.get("start");
     Integer end = (Integer) crawlerConfig.get("end");
 
-    for (Integer i = end; i <= start; i++) {
+    for (Integer i = start; i <=100; i++) {
       URL url = new URL();
       url.setUrl(String.format(URL_TEMPLATE, i.toString()));
       urls.add(url);
