@@ -18,6 +18,8 @@ public class URL
   @Indexed
   @Field("URL")
   private String url;
+
+  private String charset = "UTF-8";
   /**
    * 层级深度；由数字组成，从0往后，数值越大深度越深 <br>
    * 默认值 - 0
@@ -91,5 +93,13 @@ public class URL
 
   public void setHeaders(Map<String, String> headers) {
     this.headers = headers;
+  }
+
+  public String getCharset() {
+    return charset;
+  }
+
+  public void setCharset(String charset) {
+    this.charset = charset;
   }
 }
