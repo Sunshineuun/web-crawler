@@ -193,7 +193,7 @@ public class Medlive extends BaseWebCrawler {
     List<Data> notices = getNoticeData(responses);
 
     //数据转换
-    String[] titles = {"名称", "标题", "URL", "KEY", "ID"};
+    String[] titles = {"名称", "标题", "KEY", "URL", "ID"};
     List<Map<String, Object>> datas = new ArrayList<>();
     for (Data d : notices) {
       Map<String, Object> map = new HashMap<>();
