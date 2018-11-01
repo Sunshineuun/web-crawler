@@ -5,8 +5,6 @@ import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
 import com.qiushengming.utils.DateUtils;
-import java.util.HashMap;
-import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,14 +13,20 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
+import java.util.Map;
+
+/**
+ * ∈最新信息
+ */
 @Service
 public class Nhfpc extends Medlive{
-  private static final String URL_DOMAIN = "http://www.nhfpc.gov.cn/jws/hzyl/";
-  private static final String URL_TEMPLATE = URL_DOMAIN + "new_list%s.shtml";
+  private static final String URL_DOMAIN = "http://www.nhfpc.gov.cn/yaozs/pqt";
+  private static final String URL_TEMPLATE = URL_DOMAIN + "/new_list%s.shtml";
 
   @Override
   protected String getSiteName() {
-    return "基层卫生健康司";
+    return "中华人民共和国国家健康委员会";
   }
 
   /**
@@ -156,6 +160,6 @@ public class Nhfpc extends Medlive{
 
   @Override
   protected String[] getKeys() {
-    return new String[]{"*新增*医疗*项目*",};
+    return new String[]{"*新增*医疗*项目*","*国家基本药物*"};
   }
 }
