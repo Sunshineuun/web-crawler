@@ -11,6 +11,14 @@ import com.qiushengming.service.CrawlerConfigService;
 import com.qiushengming.service.ResponseResultService;
 import com.qiushengming.utils.DataToExecl;
 import com.qiushengming.utils.DateUtils;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -19,13 +27,6 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.Resource;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
 
 public abstract class BaseWebCrawler {
 
@@ -136,28 +137,6 @@ public abstract class BaseWebCrawler {
     isLock = Boolean.FALSE;
   }
 
-  private void _notice(List<Response> responses) {
-    List<Map<String, Object>> datas = notice(responses);
-
-    // TODO 在这里拦截过滤已通知过的数据
-
-    if(!datas.isEmpty()){
-      //数据 to Excel
-      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
-      Sheet sheet = DataToExecl.createSheet(wb);
-      DataToExecl.writeData(Arrays.asList(getTitles()), datas, sheet);
-
-      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
-          .nowDate()));
-      try {
-        wb.write(new FileOutputStream(file));
-      } catch (IOException e) {
-        log.error("{}", e);
-      }
-      getEmailTool().sendSimpleMail(getSiteName(), file);
-    }
-  }
-
   /**
    * 整体流程结束之后的操作
    * 在线程解锁之前
@@ -216,6 +195,14 @@ public abstract class BaseWebCrawler {
     getUrlPool().put(url);
   }
 
+  /**
+   * 再对象唯一判断，设置的字段名。在输出到Excel表格中，已表格的列头为准。
+   * @return  String[]
+   */
+  protected String[] getIsExitKey() {
+    return new String[]{"标题"};
+  }
+
   private void saveResponseReult(Response response) {
     response.setUpdateTime(new Date());
     response.setType(crawlerUuid);
@@ -231,6 +218,7 @@ public abstract class BaseWebCrawler {
     download.quit();
     download = null;
   }
+
 
   /**
    * 持久化资源 重复的资源不进行初始化，该怎么处理 TODO
@@ -302,6 +290,29 @@ public abstract class BaseWebCrawler {
       }
     }
     return list;
+  }
+
+  private void _notice(List<Response> responses) {
+    List<Map<String, Object>> datas = notice(responses);
+
+    // TODO 在这里拦截过滤已通知过的数据
+
+    if(!datas.isEmpty()){
+
+      //数据 to Excel
+      SXSSFWorkbook wb = DataToExecl.createSXSSFWorkbook();
+      Sheet sheet = DataToExecl.createSheet(wb);
+      DataToExecl.writeData(Arrays.asList(getTitles()), datas, sheet);
+
+      File file = new File(String.format("%s/%s_%s.xlsx", TEMP_PATH, getSiteName(), DateUtils
+          .nowDate()));
+      try {
+        wb.write(new FileOutputStream(file));
+      } catch (IOException e) {
+        log.error("{}", e);
+      }
+      getEmailTool().sendSimpleMail(getSiteName(), file);
+    }
   }
 
   /**
