@@ -2,6 +2,7 @@ package com.qiushengming.common;
 
 import com.qiushengming.entity.BaseEntity;
 import com.qiushengming.service.impl.AbstractManagementService;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
@@ -47,13 +48,17 @@ public class EmailTool
   private Map<String, Object> configMap = new HashMap<>();
 
   public void sendSimpleMail(String content) {
-    sendSimpleMail(content, new ArrayList<>());
+    sendSimpleMail(content, new ArrayList<>(), null);
+  }
+
+  public void sendSimpleMail(String content, String to) {
+    sendSimpleMail(content, new ArrayList<>(), to);
   }
 
   public void sendSimpleMail(String content, File affix) {
     List<File> files = new ArrayList<>();
     files.add(affix);
-    sendSimpleMail(content, files);
+    sendSimpleMail(content, files, null);
   }
 
   /**
@@ -62,13 +67,17 @@ public class EmailTool
    * @param content 正文内容
    * @param affix 附件
    */
-  public void sendSimpleMail(String content, List<File> affix) {
+  public void sendSimpleMail(String content, List<File> affix, String to) {
     MimeMessage message;
     try {
       message = sender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, Boolean.TRUE);
       helper.setFrom(getEmailFrom()); // 发件人
-      helper.setTo(getEmailTo()); // 收件人
+      if (StringUtils.isEmpty(to)) {
+        helper.setTo(getEmailTo());
+      }else{
+        helper.setTo(to);
+      }
       helper.setSubject(getSubjcet());
 
       // 正文
