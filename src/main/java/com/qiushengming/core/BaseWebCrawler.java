@@ -104,9 +104,9 @@ public abstract class BaseWebCrawler {
 
       isLock = Boolean.TRUE;
 
-      getUrlPool().getUrlPoolService().deleteByType(crawlerUuid());
+      /*getUrlPool().getUrlPoolService().deleteByType(crawlerUuid());
       getResponseResultService().deleteByType(crawlerUuid());
-      getConfigService().deleteById(crawlerUuid());
+      getConfigService().deleteById(crawlerUuid());*/
 
       // 0. init
       initConfig();
