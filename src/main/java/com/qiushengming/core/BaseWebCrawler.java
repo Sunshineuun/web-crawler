@@ -321,7 +321,7 @@ public abstract class BaseWebCrawler {
    * @param e 异常信息
    */
   private void notice(Exception e) {
-    emailTool.sendSimpleMail(e.toString());
+    emailTool.sendSimpleMail(e.toString(),"qiushengming@aliyun.com");
   }
 
   /**
