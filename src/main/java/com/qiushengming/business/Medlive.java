@@ -20,10 +20,9 @@ import org.springframework.util.StringUtils;
 
 /**
  * 医脉通指南浏览监测 - http://guide.medlive.cn/ 1. 数据请求的地址 * http://guide.medlive.cn/ajax/load_more.ajax
- * .php?branch=0&sort=publish&year=0&type=all&page=6
- * * branch=0 ? * sort=publish 排序 * year=0 * type=all * page=6 2. 数据请求是通过表单提交的方式进行查询的 *
- * 可以观察Headers中，Query String Parameters 和 Form Data 在后台获取是不一样的。 3. 下载的内容进行解析 *
- * 解析存储的速度有点慢，并且数据更新错了，之前指定的Class错了
+ * .php?branch=0&sort=publish&year=0&type=all&page=6 * branch=0 ? * sort=publish 排序 * year=0 *
+ * type=all * page=6 2. 数据请求是通过表单提交的方式进行查询的 * 可以观察Headers中，Query String Parameters 和 Form Data
+ * 在后台获取是不一样的。 3. 下载的内容进行解析 * 解析存储的速度有点慢，并且数据更新错了，之前指定的Class错了
  */
 @Service("Medlive")
 public class Medlive extends BaseWebCrawler {
@@ -49,6 +48,7 @@ public class Medlive extends BaseWebCrawler {
   @Async
   @Override
   @Scheduled(cron = "0 0 0 1 * ? ")
+  /*@Scheduled(cron = "0 0/1 * * * ?")*/
   public void start() {
     super.start();
   }
@@ -119,8 +119,10 @@ public class Medlive extends BaseWebCrawler {
     Boolean bool = Boolean.FALSE;
     for (Data data : response.getDatas()) {
       // 当前文章日期 > 设置时间
-      bool = DateUtils.compare(String.valueOf(data.get("publish_date")),
-          String.valueOf(crawlerConfig.get("publish_date")), "yyyy-MM-dd");
+      String dataDate = String.valueOf(data.get("publish_date"));
+      String configDate = String.valueOf(crawlerConfig.get("publish_date"));
+      log.debug("{} >> {}", dataDate, configDate);
+       bool = DateUtils.compare(dataDate, configDate, "yyyy-MM-dd");
       if (!bool) {
         break;
       }
