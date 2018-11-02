@@ -210,7 +210,7 @@ public class HttpClinentDownload implements Download {
 
     List<Header> headers = new ArrayList<>();
     for (String key : headerMap.keySet()) {
-      headers.add(new BasicHeader(key, url.getHeaders().get(key)));
+      headers.add(new BasicHeader(key, headerMap.get(key)));
     }
 
     Header[] h = new BasicHeader[headers.size()];
