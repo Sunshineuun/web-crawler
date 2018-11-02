@@ -1,4 +1,4 @@
-package com.qiushengming.business;
+package com.qiushengming.business.medlive;
 
 import com.google.gson.Gson;
 import com.qiushengming.common.download.Download;

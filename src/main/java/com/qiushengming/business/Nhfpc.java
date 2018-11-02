@@ -1,5 +1,6 @@
 package com.qiushengming.business;
 
+import com.qiushengming.business.medlive.Medlive;
 import com.qiushengming.common.Symbol;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
@@ -20,7 +21,7 @@ import java.util.Map;
  * ∈最新信息
  */
 @Service
-public class Nhfpc extends Medlive{
+public class Nhfpc extends Medlive {
   private static final String URL_DOMAIN = "http://www.nhfpc.gov.cn/yaozs/pqt";
   private static final String URL_TEMPLATE = URL_DOMAIN + "/new_list%s.shtml";
 

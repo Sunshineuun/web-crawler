@@ -2,6 +2,7 @@ package com.qiushengming.business;
 
 import static com.qiushengming.common.Symbol.BLANK;
 
+import com.qiushengming.business.medlive.Medlive;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
@@ -22,7 +23,7 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service("Cnma")
-public class Cnma extends Medlive{
+public class Cnma extends Medlive {
 
   private static final String URL_DOMAIN = "http://www.cnma.org.cn";
   private static final String URL_TEMPLATE = URL_DOMAIN + "/Home/List/index/id/17/p/%s.html";

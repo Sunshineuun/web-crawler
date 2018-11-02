@@ -2,7 +2,7 @@ package com.qiushengming.business.cfda;
 
 import static com.qiushengming.common.Symbol.BLANK;
 
-import com.qiushengming.business.Medlive;
+import com.qiushengming.business.medlive.Medlive;
 import com.qiushengming.common.Symbol;
 import com.qiushengming.common.download.Download;
 import com.qiushengming.common.download.SeleniumDownload;

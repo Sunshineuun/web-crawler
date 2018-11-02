@@ -1,5 +1,6 @@
 package com.qiushengming.business;
 
+import com.qiushengming.business.medlive.Medlive;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;

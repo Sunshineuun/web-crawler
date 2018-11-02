@@ -2,6 +2,7 @@ package com.qiushengming.business;
 
 import static com.qiushengming.common.Symbol.BLANK;
 
+import com.qiushengming.business.medlive.Medlive;
 import com.qiushengming.common.download.Download;
 import com.qiushengming.common.download.HttpClinentDownload;
 import com.qiushengming.entity.Data;
