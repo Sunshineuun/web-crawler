@@ -1,10 +1,19 @@
 package com.qiushengming.business.yaozhi;
 
+import static com.qiushengming.common.Symbol.BLANK;
+
 import com.csvreader.CsvReader;
 import com.qiushengming.core.BaseWebCrawler;
 import com.qiushengming.entity.Data;
 import com.qiushengming.entity.Response;
 import com.qiushengming.entity.URL;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -15,16 +24,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ResourceUtils;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static com.qiushengming.common.Symbol.BLANK;
 
 /**
  * 药智网(超说明书药物) - https://db.yaozh.com/unlabeleduse?name=&csyz=&indication=
@@ -41,12 +40,12 @@ public class Unlabeleduse extends BaseWebCrawler {
   }
 
   /**
-   * 每月1日执行一次 cron = "0 0 0 1 * ? "
+   *
    */
   @Async
   @Override
-  @Scheduled(cron = "0 0 0 ? * 6")
-  @Scheduled(cron = "0 0/1 * * * ? ")
+  @Scheduled(cron = "0 0 0 1 * ? ")
+  /*@Scheduled(cron = "0 0/1 * * * ? ")*/
   public void start() {
     super.start();
   }
