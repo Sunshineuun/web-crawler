@@ -38,6 +38,10 @@ public class Data extends BaseEntity{
     return getData().get(key);
   }
 
+  public void put(String key, Object value) {
+    getData().put(key, value);
+  }
+
   public String getKey() {
     return key;
   }
