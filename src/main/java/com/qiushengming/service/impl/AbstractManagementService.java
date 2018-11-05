@@ -3,6 +3,8 @@ package com.qiushengming.service.impl;
 import com.qiushengming.entity.BaseEntity;
 import com.qiushengming.service.ManagementService;
 import com.qiushengming.utils.GenericsUtils;
+import java.util.Date;
+import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +13,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
-import java.util.Date;
-import java.util.List;
-
-public class AbstractManagementService<T extends BaseEntity>
+public abstract class AbstractManagementService<T extends BaseEntity>
     implements ManagementService<T> {
 
   Logger log = LoggerFactory.getLogger(getClass());
