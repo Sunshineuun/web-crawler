@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.Assert;
 import org.springframework.util.CollectionUtils;
 
-public class HttpClinentDownload implements Download {
+public class HttpClinentDownload implements DownloadFile {
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
@@ -74,6 +74,30 @@ public class HttpClinentDownload implements Download {
       log.error("{}", e);
     }
     return responseResult;
+  }
+
+
+  @Override
+  public HttpResponse downloadFile(URL url) {
+    HttpGet get = getHttpGet(url);
+    try {
+      HttpResponse response = getClient().execute(get);
+      Assert.notNull(response, "response is not null");
+
+      if (response.getStatusLine().getStatusCode() == SC_OK) {
+        // 目前暂时先将解析编码设置为UTF-8,后续需要调整的。由对应的站点告知，编码是什么
+        return response;
+      } else {
+        // URL - 响应状态码
+        log.info(String.format("%s - %s", url, response.getStatusLine().getStatusCode()));
+      }
+
+    } catch (ConnectTimeoutException e1) {
+      log.error("超时 - {}", e1);
+    } catch (IOException e) {
+      log.error("{}", e);
+    }
+    return null;
   }
 
   /**
