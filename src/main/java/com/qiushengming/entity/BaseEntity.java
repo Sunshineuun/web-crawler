@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BaseEntity
-    implements Serializable {
+    implements Serializable, Cloneable {
 
   @Transient
   private static final Gson GSON = new Gson();
@@ -32,29 +32,25 @@ public class BaseEntity
   @Field("REMARK")
   private String remark;
   /**
-   * 更新时间 <br>
-   * 默认值 - new Date()
+   * 更新时间 <br> 默认值 - new Date()
    */
   @Field("UPDATE_TIME")
   private Date updateTime = new Date();
   /**
-   * 创建时间 <br>
-   * 默认值 - new Date()
+   * 创建时间 <br> 默认值 - new Date()
    */
   @Field("CREATE_TIME")
   private Date createTime = new Date();
   /**
-   * 是否有效；有效-1，无效-0,其它状态临行定义 <br>
-   * 默认值 - 1
+   * 是否有效；有效-1，无效-0,其它状态临行定义 <br> 默认值 - 1
    */
   @Field("IS_ENABLE")
   private int isEnable = 1;
   /**
-   * 其它一些信息的存储 <br>
-   * 默认值 - HashMap
+   * 其它一些信息的存储 <br> 默认值 - HashMap
    */
   @Field("OTHER_INFO")
-  private Map<String, Object> otherInfo =  new HashMap<>();
+  private Map<String, Object> otherInfo = new HashMap<>();
 
   public String getId() {
     return id;
@@ -115,5 +111,11 @@ public class BaseEntity
   @Override
   public String toString() {
     return GSON.toJson(this);
+  }
+
+  @Override
+  public BaseEntity clone() throws CloneNotSupportedException {
+    // 浅拷贝
+    return (BaseEntity) super.clone();
   }
 }
