@@ -11,14 +11,6 @@ import com.qiushengming.service.CrawlerConfigService;
 import com.qiushengming.service.ResponseResultService;
 import com.qiushengming.utils.DataToExecl;
 import com.qiushengming.utils.DateUtils;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.CollectionUtils;
-import org.springframework.util.StringUtils;
-
-import javax.annotation.Resource;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -27,6 +19,14 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import javax.annotation.Resource;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
 
 public abstract class BaseWebCrawler {
 
@@ -92,6 +92,7 @@ public abstract class BaseWebCrawler {
   /**
    * 启动爬虫
    */
+  @Scheduled(cron = "0 0/1 * * * ?")
   public void start() {
     try {
       log.debug("启动 ------");
