@@ -216,8 +216,10 @@ public abstract class BaseWebCrawler {
    * 退出操作
    */
   private void quit() {
-    download.quit();
-    download = null;
+    if (download != null) {
+      download.quit();
+      download = null;
+    }
   }
 
 
