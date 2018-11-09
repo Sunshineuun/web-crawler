@@ -140,6 +140,7 @@ public class SeleniumDownload implements Download {
     // 禁用图片
     Map<String, Object> prefs = new LinkedHashMap<>();
     prefs.put("profile.managed_default_content_settings.images", 2);
+    prefs.put("download.default_directory", "D:\\Medlive");
     options.setExperimentalOption("prefs", prefs);
 
     return options;
