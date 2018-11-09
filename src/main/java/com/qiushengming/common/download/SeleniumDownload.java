@@ -137,9 +137,10 @@ public class SeleniumDownload implements Download {
             options.addArguments("--proxy-server=http://202.20.16.82:10152");
         }*/
 
-    // 禁用图片
     Map<String, Object> prefs = new LinkedHashMap<>();
+    // 禁用图片
     prefs.put("profile.managed_default_content_settings.images", 2);
+    // 设置文件下载存储的路径
     prefs.put("download.default_directory", "D:\\Medlive");
     options.setExperimentalOption("prefs", prefs);
 
