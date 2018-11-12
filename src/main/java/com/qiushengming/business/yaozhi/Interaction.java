@@ -51,7 +51,7 @@ public class Interaction extends BaseWebCrawler {
     Integer start = (Integer) crawlerConfig.get("start");
     Integer end = (Integer) crawlerConfig.get("end");
 
-    for (Integer i = start; i <=100; i++) {
+    for (Integer i = start; i <=end; i++) {
       URL url = new URL();
       url.setUrl(String.format(URL_TEMPLATE, i.toString()));
       urls.add(url);
